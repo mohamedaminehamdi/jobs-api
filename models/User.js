@@ -31,7 +31,7 @@ UserSchema.pre('save', async function (next) {
     
 });
 UserSchema.methods.createJWT = function () {
-    return jwt.sign({userId:this._id, name:this.name},process.env.JWT_SECRET, {expiresIn: process.env.JWT_lIFETIME});
+    return jwt.sign({userId:this._id, name:this.name},process.env.JWT_SECRET, {expiresIn: process.env.JWT_LIFETIME});
 }
 UserSchema.methods.matchPasswords = async function (password) {
     return await bcrypt.compare(password, this.password);
