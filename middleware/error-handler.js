@@ -6,9 +6,6 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: err.message || 'something went wrong',
   }
-  /* if (err instanceof CustomAPIError) {
-    return res.status(err.statusCode).json({ msg: err.message })
-  } */
  if(err.name === 'ValidationError'){
     customError.statusCode = StatusCodes.BAD_REQUEST
     const msg = Object.values(err.errors).map(item => item.message).join(',')
@@ -22,7 +19,6 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     customError.statusCode = StatusCodes.BAD_REQUEST
     customError.msg = `No item found with id : ${err.value}`
   }
-  //return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err })
 return res.status(customError.statusCode).json({msg:customError.msg})
 }
 
