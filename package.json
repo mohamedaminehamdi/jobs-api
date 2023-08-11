@@ -27,7 +27,7 @@
     "helmet": "^4.6.0",
     "http-status-codes": "^2.1.4",
     "joi": "^17.4.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^7.8.13",
     "swagger-ui-express": "^4.1.6",
     "xss-clean": "^0.1.1",
