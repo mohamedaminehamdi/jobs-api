@@ -28,16 +28,18 @@ app.use(cors());
 app.use(xss());
 
 app.set('trust proxy', 1);
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-}));
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+  }),
+);
 // extra packages
 
 // routes
-app.use('/api/v1/jobs',authenticate, jobsRouter);
+app.use('/api/v1/jobs', authenticate, jobsRouter);
 app.use('/api/v1/auth', authRouter);
 
 app.use(notFoundMiddleware);
@@ -48,9 +50,7 @@ const port = process.env.PORT || 3000;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    app.listen(port, () =>
-      console.log(`Server is listening on port ${port}...`)
-    );
+    app.listen(port, () => console.log(`Server is listening on port ${port}...`));
   } catch (error) {
     console.log(error);
   }
