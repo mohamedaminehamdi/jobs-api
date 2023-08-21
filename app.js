@@ -1,4 +1,3 @@
-require('dotenv').config();
 require('express-async-errors');
 
 // extra security packages
@@ -11,8 +10,6 @@ const express = require('express');
 const app = express();
 
 const authenticate = require('./middleware/authentication');
-//database
-const connectDB = require('./db/connect');
 
 //routers
 const jobsRouter = require('./routes/jobs');
@@ -36,7 +33,6 @@ app.use(
     legacyHeaders: false,
   }),
 );
-// extra packages
 
 // routes
 app.use('/api/v1/jobs', authenticate, jobsRouter);
@@ -45,15 +41,4 @@ app.use('/api/v1/auth', authRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-const port = process.env.PORT || 3000;
-
-const start = async () => {
-  try {
-    await connectDB(process.env.MONGO_URI);
-    app.listen(port, () => console.log(`Server is listening on port ${port}...`));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-start();
+module.exports = app;
