@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const mongoose = require('mongoose');
 const app = require('./app');
 const connectDB = require('./db/connect');
 
@@ -14,7 +15,17 @@ const port = process.env.PORT || 3000;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    app.listen(port, () => console.log(`Server is listening on port ${port}...`));
+    const server = app.listen(port, () => console.log(`Server is listening on port ${port}...`));
+
+    const shutdown = (signal) => {
+      console.log(`${signal} received, shutting down...`);
+      server.close(async () => {
+        await mongoose.connection.close();
+        process.exit(0);
+      });
+    };
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
   } catch (error) {
     console.log(error);
     process.exit(1);
