@@ -24,6 +24,8 @@ app.use(helmet());
 app.use(cors());
 app.use(xss());
 
+app.get('/api/v1/health', (req, res) => res.json({ status: 'ok' }));
+
 app.set('trust proxy', 1);
 app.use(
   rateLimit({
