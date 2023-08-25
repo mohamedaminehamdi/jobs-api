@@ -6,6 +6,21 @@
   },
   "extends": "eslint:recommended",
   "rules": {
-    "no-unused-vars": ["warn", { "argsIgnorePattern": "^(req|res|next)$" }]
-  }
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^(req|res|next)$"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "tests/**/*.js"
+      ],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }
