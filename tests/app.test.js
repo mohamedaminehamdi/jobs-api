@@ -8,3 +8,11 @@ describe('unknown routes', () => {
     expect(res.body).toEqual({ msg: 'Route does not exist' });
   });
 });
+
+describe('GET /api/v1/health', () => {
+  it('reports the service is up', async () => {
+    const res = await request(app).get('/api/v1/health');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ status: 'ok' });
+  });
+});
