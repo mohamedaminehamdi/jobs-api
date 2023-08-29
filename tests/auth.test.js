@@ -26,3 +26,36 @@ describe('POST /api/v1/auth/register', () => {
     expect(res.body.msg).toMatch(/Duplicate/);
   });
 });
+
+describe('POST /api/v1/auth/login', () => {
+  beforeEach(() => request(app).post('/api/v1/auth/register').send(user));
+
+  it('returns a token for valid credentials', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: user.email, password: user.password });
+    expect(res.status).toBe(200);
+    expect(res.body.user).toEqual({ name: 'Jane' });
+    expect(typeof res.body.token).toBe('string');
+  });
+
+  it('requires email and password', async () => {
+    const res = await request(app).post('/api/v1/auth/login').send({ email: user.email });
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects a wrong password', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: user.email, password: 'wrong-password' });
+    expect(res.status).toBe(401);
+    expect(res.body.msg).toBe('Invalid credentials');
+  });
+
+  it('rejects an unknown email', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'nobody@example.com', password: user.password });
+    expect(res.status).toBe(401);
+  });
+});
