@@ -59,3 +59,21 @@ describe('POST /api/v1/auth/login', () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe('authentication middleware', () => {
+  it('rejects requests without a token', async () => {
+    const res = await request(app).get('/api/v1/jobs');
+    expect(res.status).toBe(401);
+    expect(res.body.msg).toBe('Authentication invalid');
+  });
+
+  it('rejects an invalid token', async () => {
+    const res = await request(app).get('/api/v1/jobs').set('Authorization', 'Bearer not-a-token');
+    expect(res.status).toBe(401);
+  });
+
+  it('rejects a non-bearer scheme', async () => {
+    const res = await request(app).get('/api/v1/jobs').set('Authorization', 'Basic abc');
+    expect(res.status).toBe(401);
+  });
+});
