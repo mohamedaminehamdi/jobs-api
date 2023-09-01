@@ -39,4 +39,40 @@ describe('jobs', () => {
     expect(res.status).toBe(200);
     expect(res.body.count).toBe(2);
   });
+
+  it('gets a single job', async () => {
+    const { body } = await createJob(token);
+    const res = await request(app).get(`/api/v1/jobs/${body.job._id}`).set('Authorization', token);
+    expect(res.status).toBe(200);
+    expect(res.body.job._id).toBe(body.job._id);
+  });
+
+  it('updates a job', async () => {
+    const { body } = await createJob(token);
+    const res = await request(app)
+      .patch(`/api/v1/jobs/${body.job._id}`)
+      .set('Authorization', token)
+      .send({ company: 'Acme', position: 'Backend Developer', status: 'interview' });
+    expect(res.status).toBe(200);
+    expect(res.body.job.status).toBe('interview');
+  });
+
+  it('rejects empty company or position on update', async () => {
+    const { body } = await createJob(token);
+    const res = await request(app)
+      .patch(`/api/v1/jobs/${body.job._id}`)
+      .set('Authorization', token)
+      .send({ company: '' });
+    expect(res.status).toBe(400);
+  });
+
+  it('deletes a job', async () => {
+    const { body } = await createJob(token);
+    const del = await request(app)
+      .delete(`/api/v1/jobs/${body.job._id}`)
+      .set('Authorization', token);
+    expect(del.status).toBe(200);
+    const res = await request(app).get(`/api/v1/jobs/${body.job._id}`).set('Authorization', token);
+    expect(res.status).toBe(404);
+  });
 });
