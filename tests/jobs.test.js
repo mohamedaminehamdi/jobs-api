@@ -76,3 +76,30 @@ describe('jobs', () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe('job ownership', () => {
+  let ownerToken;
+  let otherToken;
+  let jobId;
+
+  beforeEach(async () => {
+    ownerToken = await register('owner@example.com');
+    otherToken = await register('other@example.com');
+    jobId = (await createJob(ownerToken)).body.job._id;
+  });
+
+  it('hides other users jobs from the list', async () => {
+    const res = await request(app).get('/api/v1/jobs').set('Authorization', otherToken);
+    expect(res.body.count).toBe(0);
+  });
+
+  it.each([
+    ['get', undefined],
+    ['patch', { status: 'declined' }],
+    ['delete', undefined],
+  ])('returns 404 on %s of another user job', async (method, body) => {
+    const req = request(app)[method](`/api/v1/jobs/${jobId}`);
+    const res = await req.set('Authorization', otherToken).send(body);
+    expect(res.status).toBe(404);
+  });
+});

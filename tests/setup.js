@@ -4,6 +4,8 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 process.env.JWT_SECRET = 'test-secret';
 process.env.JWT_LIFETIME = '1d';
 
+jest.setTimeout(30000);
+
 let mongo;
 
 beforeAll(async () => {
