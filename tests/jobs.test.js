@@ -103,3 +103,12 @@ describe('job ownership', () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe('invalid ids', () => {
+  it('returns 400 for a malformed job id', async () => {
+    const token = await register();
+    const res = await request(app).get('/api/v1/jobs/not-an-id').set('Authorization', token);
+    expect(res.status).toBe(400);
+    expect(res.body.msg).toBe('No item found with id : not-an-id');
+  });
+});
