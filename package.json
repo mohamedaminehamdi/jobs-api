@@ -17,7 +17,8 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage"
   },
   "author": "Mohamed Amine Hamdi",
   "license": "ISC",
@@ -53,6 +54,13 @@
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "<rootDir>/tests/setup.js"
+    ],
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!**/node_modules/**",
+      "!coverage/**",
+      "!tests/**",
+      "!server.js"
     ]
   }
 }
