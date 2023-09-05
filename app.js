@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
+const morgan = require('morgan');
 
 const express = require('express');
 const app = express();
@@ -19,6 +20,9 @@ const authRouter = require('./routes/auth');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+}
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
