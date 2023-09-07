@@ -77,3 +77,13 @@ describe('authentication middleware', () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe('input sanitization', () => {
+  it('ignores Mongo operators in login payloads', async () => {
+    await request(app).post('/api/v1/auth/register').send(user);
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: { $ne: null }, password: user.password });
+    expect(res.status).not.toBe(200);
+  });
+});
