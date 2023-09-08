@@ -27,7 +27,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*' }));
 app.use(xss());
 app.use(mongoSanitize());
 app.use(compression());
