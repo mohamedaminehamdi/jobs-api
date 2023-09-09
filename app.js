@@ -5,7 +5,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
-const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
 const compression = require('compression');
 
@@ -13,6 +12,7 @@ const express = require('express');
 const app = express();
 
 const authenticate = require('./middleware/authentication');
+const { apiLimiter } = require('./middleware/rate-limit');
 
 //routers
 const jobsRouter = require('./routes/jobs');
@@ -35,14 +35,7 @@ app.use(compression());
 app.get('/api/v1/health', (req, res) => res.json({ status: 'ok' }));
 
 app.set('trust proxy', 1);
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-  }),
-);
+app.use(apiLimiter);
 
 // routes
 app.use('/api/v1/jobs', authenticate, jobsRouter);
