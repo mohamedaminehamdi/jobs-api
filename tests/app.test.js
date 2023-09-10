@@ -16,3 +16,12 @@ describe('GET /api/v1/health', () => {
     expect(res.body).toEqual({ status: 'ok' });
   });
 });
+
+describe('request body', () => {
+  it('rejects payloads larger than 10kb', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'a@b.co', password: 'x'.repeat(11 * 1024) });
+    expect(res.status).toBe(413);
+  });
+});
