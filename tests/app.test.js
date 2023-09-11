@@ -24,4 +24,13 @@ describe('request body', () => {
       .send({ email: 'a@b.co', password: 'x'.repeat(11 * 1024) });
     expect(res.status).toBe(413);
   });
+
+  it('returns 400 for malformed JSON', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send('{"email": ');
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({ msg: 'Malformed JSON in request body' });
+  });
 });

@@ -5,6 +5,9 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: err.message || 'something went wrong',
   };
+  if (err.type === 'entity.parse.failed') {
+    customError.msg = 'Malformed JSON in request body';
+  }
   if (err.name === 'ValidationError') {
     customError.statusCode = StatusCodes.BAD_REQUEST;
     const msg = Object.values(err.errors)
