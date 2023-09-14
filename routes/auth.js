@@ -7,6 +7,6 @@ const schemas = require('../validators/auth');
 const { login, register } = require('../controllers/auth');
 
 router.post('/register', authLimiter, validate(schemas.register), register);
-router.post('/login', authLimiter, login);
+router.post('/login', authLimiter, validate(schemas.login), login);
 
 module.exports = router;

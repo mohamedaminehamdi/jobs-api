@@ -11,6 +11,8 @@ let mongo;
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
   await mongoose.connect(mongo.getUri());
+  // wait for unique indexes so the first insert does not race the index build
+  await Promise.all(Object.values(mongoose.models).map((model) => model.init()));
 });
 
 afterEach(async () => {
