@@ -6,6 +6,11 @@ const schemas = require('../validators/jobs');
 const { getAllJobs, getJob, createJob, updateJob, deleteJob } = require('../controllers/jobs');
 
 router.route('/').get(getAllJobs).post(validate(schemas.create), createJob);
-router.route('/:id').get(getJob).patch(validate(schemas.update), updateJob).delete(deleteJob);
+router
+  .route('/:id')
+  .all(validate(schemas.params, 'params'))
+  .get(getJob)
+  .patch(validate(schemas.update), updateJob)
+  .delete(deleteJob);
 
 module.exports = router;

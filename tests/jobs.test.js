@@ -109,6 +109,6 @@ describe('invalid ids', () => {
     const token = await register();
     const res = await request(app).get('/api/v1/jobs/not-an-id').set('Authorization', token);
     expect(res.status).toBe(400);
-    expect(res.body.msg).toBe('No item found with id : not-an-id');
+    expect(res.body.msg).toBe('Invalid job id: not-an-id');
   });
 });
