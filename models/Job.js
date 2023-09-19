@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { JOB_STATUS } = require('../utils/constants');
 
 const JobSchema = new mongoose.Schema(
   {
@@ -14,7 +15,7 @@ const JobSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['interview', 'declined', 'pending'],
+      enum: JOB_STATUS,
       default: 'pending',
     },
     createdBy: {
