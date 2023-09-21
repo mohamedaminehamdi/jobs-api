@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { JOB_STATUS } = require('../utils/constants');
+const { JOB_STATUS, JOB_TYPES } = require('../utils/constants');
 
 const JobSchema = new mongoose.Schema(
   {
@@ -17,6 +17,11 @@ const JobSchema = new mongoose.Schema(
       type: String,
       enum: JOB_STATUS,
       default: 'pending',
+    },
+    jobType: {
+      type: String,
+      enum: JOB_TYPES,
+      default: 'full-time',
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

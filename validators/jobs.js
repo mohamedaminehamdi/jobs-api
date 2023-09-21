@@ -1,16 +1,18 @@
 const Joi = require('joi');
-const { JOB_STATUS } = require('../utils/constants');
+const { JOB_STATUS, JOB_TYPES } = require('../utils/constants');
 
 const create = Joi.object({
   company: Joi.string().trim().max(50).required(),
   position: Joi.string().trim().max(100).required(),
   status: Joi.string().valid(...JOB_STATUS),
+  jobType: Joi.string().valid(...JOB_TYPES),
 });
 
 const update = Joi.object({
   company: Joi.string().trim().max(50),
   position: Joi.string().trim().max(100),
   status: Joi.string().valid(...JOB_STATUS),
+  jobType: Joi.string().valid(...JOB_TYPES),
 }).min(1);
 
 const params = Joi.object({

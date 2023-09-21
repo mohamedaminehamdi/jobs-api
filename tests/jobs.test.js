@@ -24,6 +24,7 @@ describe('jobs', () => {
       company: 'Acme',
       position: 'Backend Developer',
       status: 'pending',
+      jobType: 'full-time',
     });
   });
 
