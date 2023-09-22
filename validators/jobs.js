@@ -6,6 +6,7 @@ const create = Joi.object({
   position: Joi.string().trim().max(100).required(),
   status: Joi.string().valid(...JOB_STATUS),
   jobType: Joi.string().valid(...JOB_TYPES),
+  jobLocation: Joi.string().trim().max(100).allow(''),
 });
 
 const update = Joi.object({
@@ -13,6 +14,7 @@ const update = Joi.object({
   position: Joi.string().trim().max(100),
   status: Joi.string().valid(...JOB_STATUS),
   jobType: Joi.string().valid(...JOB_TYPES),
+  jobLocation: Joi.string().trim().max(100).allow(''),
 }).min(1);
 
 const params = Joi.object({

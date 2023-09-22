@@ -53,9 +53,9 @@ describe('jobs', () => {
     const res = await request(app)
       .patch(`/api/v1/jobs/${body.job._id}`)
       .set('Authorization', token)
-      .send({ company: 'Acme', position: 'Backend Developer', status: 'interview' });
+      .send({ status: 'interview', jobLocation: 'Tunis' });
     expect(res.status).toBe(200);
-    expect(res.body.job.status).toBe('interview');
+    expect(res.body.job).toMatchObject({ status: 'interview', jobLocation: 'Tunis' });
   });
 
   it('rejects empty company or position on update', async () => {

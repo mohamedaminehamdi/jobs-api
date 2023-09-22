@@ -23,6 +23,11 @@ const JobSchema = new mongoose.Schema(
       enum: JOB_TYPES,
       default: 'full-time',
     },
+    jobLocation: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
