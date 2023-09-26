@@ -2,6 +2,8 @@ const Job = require('../models/Job');
 const { StatusCodes } = require('http-status-codes');
 const { NotFoundError } = require('../errors');
 
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const getAllJobs = async (req, res) => {
   const { status, jobType, search } = req.query;
   const query = { createdBy: req.user.userId };
@@ -12,7 +14,7 @@ const getAllJobs = async (req, res) => {
     query.jobType = jobType;
   }
   if (search) {
-    const pattern = new RegExp(search, 'i');
+    const pattern = new RegExp(escapeRegex(search), 'i');
     query.$or = [{ position: pattern }, { company: pattern }];
   }
   const jobs = await Job.find(query).sort('createdAt');
