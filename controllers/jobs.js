@@ -4,8 +4,15 @@ const { NotFoundError } = require('../errors');
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+const SORT_OPTIONS = {
+  latest: '-createdAt',
+  oldest: 'createdAt',
+  'a-z': 'position',
+  'z-a': '-position',
+};
+
 const getAllJobs = async (req, res) => {
-  const { status, jobType, search } = req.query;
+  const { status, jobType, search, sort } = req.query;
   const query = { createdBy: req.user.userId };
   if (status && status !== 'all') {
     query.status = status;
@@ -17,7 +24,7 @@ const getAllJobs = async (req, res) => {
     const pattern = new RegExp(escapeRegex(search), 'i');
     query.$or = [{ position: pattern }, { company: pattern }];
   }
-  const jobs = await Job.find(query).sort('createdAt');
+  const jobs = await Job.find(query).sort(SORT_OPTIONS[sort] || SORT_OPTIONS.latest);
   res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
 };
 
