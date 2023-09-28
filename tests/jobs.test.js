@@ -38,7 +38,7 @@ describe('jobs', () => {
     await createJob(token, { company: 'Globex', position: 'SRE' });
     const res = await request(app).get('/api/v1/jobs').set('Authorization', token);
     expect(res.status).toBe(200);
-    expect(res.body.count).toBe(2);
+    expect(res.body.totalJobs).toBe(2);
   });
 
   it('gets a single job', async () => {
@@ -91,7 +91,7 @@ describe('job ownership', () => {
 
   it('hides other users jobs from the list', async () => {
     const res = await request(app).get('/api/v1/jobs').set('Authorization', otherToken);
-    expect(res.body.count).toBe(0);
+    expect(res.body.totalJobs).toBe(0);
   });
 
   it.each([
