@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { JOB_STATUS, JOB_TYPES } = require('../utils/constants');
+const { JOB_STATUS, JOB_TYPES, SORT_OPTIONS } = require('../utils/constants');
 
 const create = Joi.object({
   company: Joi.string().trim().max(50).required(),
@@ -17,6 +17,17 @@ const update = Joi.object({
   jobLocation: Joi.string().trim().max(100).allow(''),
 }).min(1);
 
+const list = Joi.object({
+  status: Joi.string().valid('all', ...JOB_STATUS),
+  jobType: Joi.string().valid('all', ...JOB_TYPES),
+  search: Joi.string().trim().allow(''),
+  sort: Joi.string()
+    .valid(...Object.keys(SORT_OPTIONS))
+    .default('latest'),
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).max(100).default(10),
+});
+
 const params = Joi.object({
   id: Joi.string()
     .pattern(/^[0-9a-fA-F]{24}$/)
@@ -24,4 +35,4 @@ const params = Joi.object({
     .messages({ 'string.pattern.base': 'Invalid job id: {#value}' }),
 });
 
-module.exports = { create, update, params };
+module.exports = { create, update, list, params };

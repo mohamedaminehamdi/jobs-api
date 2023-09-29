@@ -5,7 +5,10 @@ const validate = require('../middleware/validate');
 const schemas = require('../validators/jobs');
 const { getAllJobs, getJob, createJob, updateJob, deleteJob } = require('../controllers/jobs');
 
-router.route('/').get(getAllJobs).post(validate(schemas.create), createJob);
+router
+  .route('/')
+  .get(validate(schemas.list, 'query'), getAllJobs)
+  .post(validate(schemas.create), createJob);
 router
   .route('/:id')
   .all(validate(schemas.params, 'params'))

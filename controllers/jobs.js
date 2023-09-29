@@ -1,20 +1,12 @@
 const Job = require('../models/Job');
 const { StatusCodes } = require('http-status-codes');
 const { NotFoundError } = require('../errors');
+const { SORT_OPTIONS } = require('../utils/constants');
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const SORT_OPTIONS = {
-  latest: '-createdAt',
-  oldest: 'createdAt',
-  'a-z': 'position',
-  'z-a': '-position',
-};
-
 const getAllJobs = async (req, res) => {
-  const { status, jobType, search, sort } = req.query;
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 10;
+  const { status, jobType, search, sort, page, limit } = req.query;
   const query = { createdBy: req.user.userId };
   if (status && status !== 'all') {
     query.status = status;
@@ -27,7 +19,7 @@ const getAllJobs = async (req, res) => {
     query.$or = [{ position: pattern }, { company: pattern }];
   }
   const jobs = await Job.find(query)
-    .sort(SORT_OPTIONS[sort] || SORT_OPTIONS.latest)
+    .sort(SORT_OPTIONS[sort])
     .skip((page - 1) * limit)
     .limit(limit);
   const totalJobs = await Job.countDocuments(query);
