@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('../app');
+const server = require('./server');
 
-const register = (body) => request(app).post('/api/v1/auth/register').send(body);
+const register = (body) => request(server).post('/api/v1/auth/register').send(body);
 
 describe('request validation', () => {
   it('lists every missing register field', async () => {
@@ -24,7 +24,7 @@ describe('request validation', () => {
     });
 
     it('rejects an unknown status', async () => {
-      const res = await request(app)
+      const res = await request(server)
         .post('/api/v1/jobs')
         .set('Authorization', token)
         .send({ company: 'Acme', position: 'Dev', status: 'hired' });
@@ -33,7 +33,7 @@ describe('request validation', () => {
     });
 
     it('strips fields that are not part of the schema', async () => {
-      const res = await request(app)
+      const res = await request(server)
         .post('/api/v1/jobs')
         .set('Authorization', token)
         .send({ company: 'Acme', position: 'Dev', createdBy: '64e3a1f0c2a4b5d6e7f80910' });
@@ -42,11 +42,11 @@ describe('request validation', () => {
     });
 
     it('rejects an empty update', async () => {
-      const created = await request(app)
+      const created = await request(server)
         .post('/api/v1/jobs')
         .set('Authorization', token)
         .send({ company: 'Acme', position: 'Dev' });
-      const res = await request(app)
+      const res = await request(server)
         .patch(`/api/v1/jobs/${created.body.job._id}`)
         .set('Authorization', token)
         .send({});

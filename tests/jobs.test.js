@@ -1,15 +1,15 @@
 const request = require('supertest');
-const app = require('../app');
+const server = require('./server');
 
 const register = async (email = 'jane@example.com') => {
-  const res = await request(app)
+  const res = await request(server)
     .post('/api/v1/auth/register')
     .send({ name: 'Jane', email, password: 'secret123' });
   return `Bearer ${res.body.token}`;
 };
 
 const createJob = (token, job = { company: 'Acme', position: 'Backend Developer' }) =>
-  request(app).post('/api/v1/jobs').set('Authorization', token).send(job);
+  request(server).post('/api/v1/jobs').set('Authorization', token).send(job);
 
 describe('jobs', () => {
   let token;
@@ -36,21 +36,23 @@ describe('jobs', () => {
   it('lists only the current user jobs', async () => {
     await createJob(token);
     await createJob(token, { company: 'Globex', position: 'SRE' });
-    const res = await request(app).get('/api/v1/jobs').set('Authorization', token);
+    const res = await request(server).get('/api/v1/jobs').set('Authorization', token);
     expect(res.status).toBe(200);
     expect(res.body.totalJobs).toBe(2);
   });
 
   it('gets a single job', async () => {
     const { body } = await createJob(token);
-    const res = await request(app).get(`/api/v1/jobs/${body.job._id}`).set('Authorization', token);
+    const res = await request(server)
+      .get(`/api/v1/jobs/${body.job._id}`)
+      .set('Authorization', token);
     expect(res.status).toBe(200);
     expect(res.body.job._id).toBe(body.job._id);
   });
 
   it('updates a job', async () => {
     const { body } = await createJob(token);
-    const res = await request(app)
+    const res = await request(server)
       .patch(`/api/v1/jobs/${body.job._id}`)
       .set('Authorization', token)
       .send({ status: 'interview', jobLocation: 'Tunis' });
@@ -60,7 +62,7 @@ describe('jobs', () => {
 
   it('rejects empty company or position on update', async () => {
     const { body } = await createJob(token);
-    const res = await request(app)
+    const res = await request(server)
       .patch(`/api/v1/jobs/${body.job._id}`)
       .set('Authorization', token)
       .send({ company: '' });
@@ -69,11 +71,13 @@ describe('jobs', () => {
 
   it('deletes a job', async () => {
     const { body } = await createJob(token);
-    const del = await request(app)
+    const del = await request(server)
       .delete(`/api/v1/jobs/${body.job._id}`)
       .set('Authorization', token);
     expect(del.status).toBe(200);
-    const res = await request(app).get(`/api/v1/jobs/${body.job._id}`).set('Authorization', token);
+    const res = await request(server)
+      .get(`/api/v1/jobs/${body.job._id}`)
+      .set('Authorization', token);
     expect(res.status).toBe(404);
   });
 });
@@ -90,7 +94,7 @@ describe('job ownership', () => {
   });
 
   it('hides other users jobs from the list', async () => {
-    const res = await request(app).get('/api/v1/jobs').set('Authorization', otherToken);
+    const res = await request(server).get('/api/v1/jobs').set('Authorization', otherToken);
     expect(res.body.totalJobs).toBe(0);
   });
 
@@ -99,7 +103,7 @@ describe('job ownership', () => {
     ['patch', { status: 'declined' }],
     ['delete', undefined],
   ])('returns 404 on %s of another user job', async (method, body) => {
-    const req = request(app)[method](`/api/v1/jobs/${jobId}`);
+    const req = request(server)[method](`/api/v1/jobs/${jobId}`);
     const res = await req.set('Authorization', otherToken).send(body);
     expect(res.status).toBe(404);
   });
@@ -108,8 +112,76 @@ describe('job ownership', () => {
 describe('invalid ids', () => {
   it('returns 400 for a malformed job id', async () => {
     const token = await register();
-    const res = await request(app).get('/api/v1/jobs/not-an-id').set('Authorization', token);
+    const res = await request(server).get('/api/v1/jobs/not-an-id').set('Authorization', token);
     expect(res.status).toBe(400);
     expect(res.body.msg).toBe('Invalid job id: not-an-id');
+  });
+});
+
+describe('GET /api/v1/jobs query options', () => {
+  let token;
+  const list = (query) =>
+    request(server).get('/api/v1/jobs').query(query).set('Authorization', token);
+
+  beforeEach(async () => {
+    token = await register();
+    const jobs = [
+      { company: 'Acme', position: 'Backend Developer', status: 'interview', jobType: 'remote' },
+      { company: 'Globex', position: 'Frontend Developer', status: 'declined' },
+      { company: 'Initech', position: 'C++ Engineer', jobType: 'internship' },
+    ];
+    for (const job of jobs) {
+      await createJob(token, job);
+    }
+  });
+
+  it('filters by status', async () => {
+    const res = await list({ status: 'interview' });
+    expect(res.body.jobs.map((job) => job.company)).toEqual(['Acme']);
+  });
+
+  it('treats status=all as no filter', async () => {
+    const res = await list({ status: 'all' });
+    expect(res.body.totalJobs).toBe(3);
+  });
+
+  it('filters by jobType', async () => {
+    const res = await list({ jobType: 'internship' });
+    expect(res.body.jobs.map((job) => job.company)).toEqual(['Initech']);
+  });
+
+  it('searches position and company case-insensitively', async () => {
+    expect((await list({ search: 'developer' })).body.totalJobs).toBe(2);
+    expect((await list({ search: 'globex' })).body.totalJobs).toBe(1);
+  });
+
+  it('treats regex characters in search literally', async () => {
+    const res = await list({ search: 'C++' });
+    expect(res.status).toBe(200);
+    expect(res.body.jobs.map((job) => job.company)).toEqual(['Initech']);
+  });
+
+  it('sorts newest first by default and supports a-z', async () => {
+    const latest = await list({});
+    expect(latest.body.jobs[0].company).toBe('Initech');
+    const az = await list({ sort: 'a-z' });
+    expect(az.body.jobs.map((job) => job.position)).toEqual([
+      'Backend Developer',
+      'C++ Engineer',
+      'Frontend Developer',
+    ]);
+  });
+
+  it('paginates results', async () => {
+    const res = await list({ sort: 'oldest', page: 2, limit: 2 });
+    expect(res.body).toMatchObject({ totalJobs: 3, numOfPages: 2 });
+    expect(res.body.jobs.map((job) => job.company)).toEqual(['Initech']);
+  });
+
+  it('rejects invalid query params', async () => {
+    const res = await list({ sort: 'random', limit: 1000 });
+    expect(res.status).toBe(400);
+    expect(res.body.msg).toMatch(/sort must be one of/);
+    expect(res.body.msg).toMatch(/limit must be less than or equal to 100/);
   });
 });
