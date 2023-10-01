@@ -37,4 +37,7 @@ const JobSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// list queries filter by owner and sort by date
+JobSchema.index({ createdBy: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Job', JobSchema);
