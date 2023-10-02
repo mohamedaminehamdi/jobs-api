@@ -1,7 +1,8 @@
+const mongoose = require('mongoose');
 const Job = require('../models/Job');
 const { StatusCodes } = require('http-status-codes');
 const { NotFoundError } = require('../errors');
-const { SORT_OPTIONS } = require('../utils/constants');
+const { JOB_STATUS, SORT_OPTIONS } = require('../utils/constants');
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -81,10 +82,24 @@ const deleteJob = async (req, res) => {
   res.status(StatusCodes.OK).send();
 };
 
+const showStats = async (req, res) => {
+  const createdBy = new mongoose.Types.ObjectId(req.user.userId);
+  const counts = await Job.aggregate([
+    { $match: { createdBy } },
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
+  const defaultStats = Object.fromEntries(JOB_STATUS.map((status) => [status, 0]));
+  counts.forEach(({ _id, count }) => {
+    defaultStats[_id] = count;
+  });
+  res.status(StatusCodes.OK).json({ defaultStats });
+};
+
 module.exports = {
   getAllJobs,
   getJob,
   createJob,
   updateJob,
   deleteJob,
+  showStats,
 };
