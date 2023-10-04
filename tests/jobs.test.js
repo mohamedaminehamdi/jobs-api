@@ -185,3 +185,29 @@ describe('GET /api/v1/jobs query options', () => {
     expect(res.body.msg).toMatch(/limit must be less than or equal to 100/);
   });
 });
+
+describe('GET /api/v1/jobs/stats', () => {
+  it('counts jobs per status and groups them by month', async () => {
+    const token = await register();
+    await createJob(token, { company: 'Acme', position: 'Dev', status: 'interview' });
+    await createJob(token, { company: 'Globex', position: 'Dev', status: 'interview' });
+    await createJob(token, { company: 'Initech', position: 'Dev' });
+    await createJob(await register('other@example.com'));
+
+    const res = await request(server).get('/api/v1/jobs/stats').set('Authorization', token);
+    expect(res.status).toBe(200);
+    expect(res.body.defaultStats).toEqual({ pending: 1, interview: 2, offer: 0, declined: 0 });
+
+    const month = new Date().toISOString().slice(0, 7);
+    expect(res.body.monthlyApplications).toEqual([{ date: month, count: 3 }]);
+  });
+
+  it('returns zeros for a user without jobs', async () => {
+    const token = await register();
+    const res = await request(server).get('/api/v1/jobs/stats').set('Authorization', token);
+    expect(res.body).toEqual({
+      defaultStats: { pending: 0, interview: 0, offer: 0, declined: 0 },
+      monthlyApplications: [],
+    });
+  });
+});
