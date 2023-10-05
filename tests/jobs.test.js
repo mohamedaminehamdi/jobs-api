@@ -75,6 +75,7 @@ describe('jobs', () => {
       .delete(`/api/v1/jobs/${body.job._id}`)
       .set('Authorization', token);
     expect(del.status).toBe(200);
+    expect(del.body).toEqual({ msg: 'Job removed' });
     const res = await request(server)
       .get(`/api/v1/jobs/${body.job._id}`)
       .set('Authorization', token);
