@@ -44,6 +44,13 @@ describe('POST /api/v1/auth/login', () => {
     expect(res.status).toBe(400);
   });
 
+  it('matches emails case-insensitively', async () => {
+    const res = await request(server)
+      .post('/api/v1/auth/login')
+      .send({ email: ' JANE@example.com ', password: user.password });
+    expect(res.status).toBe(200);
+  });
+
   it('rejects a wrong password', async () => {
     const res = await request(server)
       .post('/api/v1/auth/login')
