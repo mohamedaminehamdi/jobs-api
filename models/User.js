@@ -25,6 +25,16 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please provide a password'],
     minlength: 6,
   },
+  lastName: {
+    type: String,
+    trim: true,
+    maxlength: 50,
+  },
+  location: {
+    type: String,
+    trim: true,
+    maxlength: 100,
+  },
 });
 
 UserSchema.set('toJSON', {

@@ -4,6 +4,8 @@ const register = Joi.object({
   name: Joi.string().trim().min(3).max(50).required(),
   email: Joi.string().trim().lowercase().email().required(),
   password: Joi.string().min(6).required(),
+  lastName: Joi.string().trim().max(50).allow(''),
+  location: Joi.string().trim().max(100).allow(''),
 });
 
 const login = Joi.object({
