@@ -7,8 +7,15 @@ describe('POST /api/v1/auth/register', () => {
   it('creates a user and returns a token', async () => {
     const res = await request(server).post('/api/v1/auth/register').send(user);
     expect(res.status).toBe(201);
-    expect(res.body.user).toEqual({ name: 'Jane' });
+    expect(res.body.user).toEqual({ name: 'Jane', email: 'jane@example.com' });
     expect(typeof res.body.token).toBe('string');
+  });
+
+  it('accepts optional lastName and location', async () => {
+    const res = await request(server)
+      .post('/api/v1/auth/register')
+      .send({ ...user, lastName: 'Doe', location: 'Tunis' });
+    expect(res.body.user).toMatchObject({ lastName: 'Doe', location: 'Tunis' });
   });
 
   it('rejects an invalid email', async () => {
@@ -35,7 +42,7 @@ describe('POST /api/v1/auth/login', () => {
       .post('/api/v1/auth/login')
       .send({ email: user.email, password: user.password });
     expect(res.status).toBe(200);
-    expect(res.body.user).toEqual({ name: 'Jane' });
+    expect(res.body.user).toEqual({ name: 'Jane', email: 'jane@example.com' });
     expect(typeof res.body.token).toBe('string');
   });
 
