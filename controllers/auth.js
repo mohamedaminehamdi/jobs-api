@@ -4,6 +4,14 @@ const { UnauthenticatedError } = require('../errors');
 
 const profile = ({ name, lastName, email, location }) => ({ name, lastName, email, location });
 
+const findCurrentUser = async (req) => {
+  const user = await User.findById(req.user.userId);
+  if (!user) {
+    throw new UnauthenticatedError('Authentication invalid');
+  }
+  return user;
+};
+
 const register = async (req, res) => {
   const user = await User.create({ ...req.body });
   const token = user.createJWT();
@@ -24,7 +32,13 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: profile(user), token });
 };
 
+const getCurrentUser = async (req, res) => {
+  const user = await findCurrentUser(req);
+  res.status(StatusCodes.OK).json({ user: profile(user) });
+};
+
 module.exports = {
   register,
   login,
+  getCurrentUser,
 };
