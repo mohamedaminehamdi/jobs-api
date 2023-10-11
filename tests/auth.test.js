@@ -1,5 +1,6 @@
 const request = require('supertest');
 const server = require('./server');
+const User = require('../models/User');
 
 const user = { name: 'Jane', email: 'jane@example.com', password: 'secret123' };
 
@@ -101,5 +102,31 @@ describe('input sanitization', () => {
       .post('/api/v1/auth/login')
       .send({ email: { $ne: null }, password: user.password });
     expect(res.status).not.toBe(200);
+  });
+});
+
+const registerAndGetToken = async (body = user) => {
+  const res = await request(server).post('/api/v1/auth/register').send(body);
+  return `Bearer ${res.body.token}`;
+};
+
+describe('GET /api/v1/auth/me', () => {
+  it('returns the current user profile', async () => {
+    const token = await registerAndGetToken({ ...user, location: 'Tunis' });
+    const res = await request(server).get('/api/v1/auth/me').set('Authorization', token);
+    expect(res.status).toBe(200);
+    expect(res.body.user).toEqual({ name: 'Jane', email: 'jane@example.com', location: 'Tunis' });
+  });
+
+  it('requires authentication', async () => {
+    const res = await request(server).get('/api/v1/auth/me');
+    expect(res.status).toBe(401);
+  });
+
+  it('rejects a token whose user no longer exists', async () => {
+    const token = await registerAndGetToken();
+    await User.deleteMany({});
+    const res = await request(server).get('/api/v1/auth/me').set('Authorization', token);
+    expect(res.status).toBe(401);
   });
 });
