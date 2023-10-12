@@ -37,8 +37,21 @@ const getCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: profile(user) });
 };
 
+const updateUser = async (req, res) => {
+  const user = await findCurrentUser(req);
+  ['name', 'email', 'lastName', 'location'].forEach((field) => {
+    if (req.body[field] !== undefined) {
+      user[field] = req.body[field];
+    }
+  });
+  await user.save();
+  // the token carries the name, so issue a fresh one
+  res.status(StatusCodes.OK).json({ user: profile(user), token: user.createJWT() });
+};
+
 module.exports = {
   register,
   login,
   getCurrentUser,
+  updateUser,
 };
