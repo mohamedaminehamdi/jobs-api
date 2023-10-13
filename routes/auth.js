@@ -10,6 +10,6 @@ const { login, register, getCurrentUser, updateUser } = require('../controllers/
 router.post('/register', authLimiter, validate(schemas.register), register);
 router.post('/login', authLimiter, validate(schemas.login), login);
 router.get('/me', authenticate, getCurrentUser);
-router.patch('/updateUser', authenticate, updateUser);
+router.patch('/updateUser', authenticate, validate(schemas.updateUser), updateUser);
 
 module.exports = router;

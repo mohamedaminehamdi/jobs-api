@@ -39,11 +39,8 @@ const getCurrentUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const user = await findCurrentUser(req);
-  ['name', 'email', 'lastName', 'location'].forEach((field) => {
-    if (req.body[field] !== undefined) {
-      user[field] = req.body[field];
-    }
-  });
+  // body is already restricted to profile fields by the validator
+  Object.assign(user, req.body);
   await user.save();
   // the token carries the name, so issue a fresh one
   res.status(StatusCodes.OK).json({ user: profile(user), token: user.createJWT() });

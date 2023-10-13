@@ -13,4 +13,11 @@ const login = Joi.object({
   password: Joi.string().required(),
 });
 
-module.exports = { register, login };
+const updateUser = Joi.object({
+  name: Joi.string().trim().min(3).max(50),
+  email: Joi.string().trim().lowercase().email(),
+  lastName: Joi.string().trim().max(50).allow(''),
+  location: Joi.string().trim().max(100).allow(''),
+}).min(1);
+
+module.exports = { register, login, updateUser };
