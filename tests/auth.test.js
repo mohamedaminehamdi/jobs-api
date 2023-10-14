@@ -130,3 +130,43 @@ describe('GET /api/v1/auth/me', () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe('PATCH /api/v1/auth/updateUser', () => {
+  const update = (token, body) =>
+    request(server).patch('/api/v1/auth/updateUser').set('Authorization', token).send(body);
+
+  it('updates profile fields and returns a fresh token', async () => {
+    const token = await registerAndGetToken();
+    const res = await update(token, { name: 'Janet', location: 'Sousse' });
+    expect(res.status).toBe(200);
+    expect(res.body.user).toEqual({ name: 'Janet', email: 'jane@example.com', location: 'Sousse' });
+
+    const me = await request(server)
+      .get('/api/v1/auth/me')
+      .set('Authorization', `Bearer ${res.body.token}`);
+    expect(me.body.user.name).toBe('Janet');
+  });
+
+  it('cannot change the password', async () => {
+    const token = await registerAndGetToken();
+    await update(token, { name: 'Janet', password: 'hijacked' });
+    const login = await request(server)
+      .post('/api/v1/auth/login')
+      .send({ email: user.email, password: user.password });
+    expect(login.status).toBe(200);
+  });
+
+  it('rejects an email used by another account', async () => {
+    await registerAndGetToken({ ...user, email: 'taken@example.com' });
+    const token = await registerAndGetToken();
+    const res = await update(token, { email: 'taken@example.com' });
+    expect(res.status).toBe(400);
+    expect(res.body.msg).toMatch(/Duplicate/);
+  });
+
+  it('rejects an empty update', async () => {
+    const token = await registerAndGetToken();
+    const res = await update(token, {});
+    expect(res.status).toBe(400);
+  });
+});
