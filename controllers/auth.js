@@ -46,9 +46,22 @@ const updateUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: profile(user), token: user.createJWT() });
 };
 
+const updatePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const user = await findCurrentUser(req);
+  const isPasswordCorrect = await user.matchPasswords(oldPassword);
+  if (!isPasswordCorrect) {
+    throw new UnauthenticatedError('Invalid credentials');
+  }
+  user.password = newPassword;
+  await user.save();
+  res.status(StatusCodes.OK).json({ msg: 'Password updated' });
+};
+
 module.exports = {
   register,
   login,
   getCurrentUser,
   updateUser,
+  updatePassword,
 };

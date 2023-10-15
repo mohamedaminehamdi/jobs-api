@@ -20,4 +20,9 @@ const updateUser = Joi.object({
   location: Joi.string().trim().max(100).allow(''),
 }).min(1);
 
-module.exports = { register, login, updateUser };
+const updatePassword = Joi.object({
+  oldPassword: Joi.string().required(),
+  newPassword: Joi.string().min(6).required(),
+});
+
+module.exports = { register, login, updateUser, updatePassword };
