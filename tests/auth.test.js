@@ -170,3 +170,34 @@ describe('PATCH /api/v1/auth/updateUser', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('PATCH /api/v1/auth/updatePassword', () => {
+  const updatePassword = (token, body) =>
+    request(server).patch('/api/v1/auth/updatePassword').set('Authorization', token).send(body);
+  const login = (password) =>
+    request(server).post('/api/v1/auth/login').send({ email: user.email, password });
+
+  it('changes the password', async () => {
+    const token = await registerAndGetToken();
+    const res = await updatePassword(token, {
+      oldPassword: user.password,
+      newPassword: 'new-secret',
+    });
+    expect(res.status).toBe(200);
+    expect((await login(user.password)).status).toBe(401);
+    expect((await login('new-secret')).status).toBe(200);
+  });
+
+  it('requires the current password', async () => {
+    const token = await registerAndGetToken();
+    const res = await updatePassword(token, { oldPassword: 'wrong', newPassword: 'new-secret' });
+    expect(res.status).toBe(401);
+    expect((await login(user.password)).status).toBe(200);
+  });
+
+  it('enforces the minimum length on the new password', async () => {
+    const token = await registerAndGetToken();
+    const res = await updatePassword(token, { oldPassword: user.password, newPassword: '123' });
+    expect(res.status).toBe(400);
+  });
+});
