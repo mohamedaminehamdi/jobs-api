@@ -35,6 +35,10 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     maxlength: 100,
   },
+  isDemo: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.set('toJSON', {
@@ -51,9 +55,13 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 UserSchema.methods.createJWT = function () {
-  return jwt.sign({ userId: this._id, name: this.name }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_LIFETIME,
-  });
+  return jwt.sign(
+    { userId: this._id, name: this.name, isDemo: this.isDemo },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_LIFETIME,
+    },
+  );
 };
 UserSchema.methods.matchPasswords = async function (password) {
   return await bcrypt.compare(password, this.password);
