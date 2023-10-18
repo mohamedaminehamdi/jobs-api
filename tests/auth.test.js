@@ -201,3 +201,45 @@ describe('PATCH /api/v1/auth/updatePassword', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('demo user', () => {
+  let token;
+  beforeEach(async () => {
+    await User.create({ ...user, isDemo: true });
+    const res = await request(server)
+      .post('/api/v1/auth/login')
+      .send({ email: user.email, password: user.password });
+    token = `Bearer ${res.body.token}`;
+  });
+
+  it('can read data', async () => {
+    expect((await request(server).get('/api/v1/jobs').set('Authorization', token)).status).toBe(
+      200,
+    );
+    expect((await request(server).get('/api/v1/auth/me').set('Authorization', token)).status).toBe(
+      200,
+    );
+  });
+
+  it.each([
+    ['post', '/api/v1/jobs', { company: 'Acme', position: 'Dev' }],
+    ['patch', '/api/v1/jobs/64e3a1f0c2a4b5d6e7f80910', { status: 'offer' }],
+    ['delete', '/api/v1/jobs/64e3a1f0c2a4b5d6e7f80910', undefined],
+    ['patch', '/api/v1/auth/updateUser', { name: 'Hacker' }],
+    ['patch', '/api/v1/auth/updatePassword', { oldPassword: 'secret123', newPassword: 'x' }],
+  ])('cannot %s %s', async (method, url, body) => {
+    const req = request(server)[method](url);
+    const res = await req.set('Authorization', token).send(body);
+    expect(res.status).toBe(403);
+    expect(res.body.msg).toBe('Demo user is read only');
+  });
+
+  it('cannot be created through register', async () => {
+    await User.deleteMany({});
+    await request(server)
+      .post('/api/v1/auth/register')
+      .send({ ...user, isDemo: true });
+    const created = await User.findOne({ email: user.email });
+    expect(created.isDemo).toBe(false);
+  });
+});
