@@ -8,7 +8,10 @@ const mongoSanitize = require('express-mongo-sanitize');
 const morgan = require('morgan');
 const compression = require('compression');
 
+const path = require('path');
 const express = require('express');
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
 const app = express();
 
 const authenticate = require('./middleware/authentication');
@@ -33,6 +36,9 @@ app.use(mongoSanitize());
 app.use(compression());
 
 app.get('/api/v1/health', (req, res) => res.json({ status: 'ok' }));
+
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.set('trust proxy', 1);
 app.use(apiLimiter);

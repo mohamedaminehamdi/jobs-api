@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: Jobs API
+  version: 1.0.0
+  description: >-
+    Track job applications. Register or log in to get a JWT, then click Authorize
+    and paste it to call the protected endpoints.
+servers:
+  - url: /api/v1
+tags:
+  - name: Auth
+  - name: Jobs
+  - name: Health
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
