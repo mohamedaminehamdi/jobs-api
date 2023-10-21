@@ -66,6 +66,92 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
+  /jobs:
+    get:
+      tags: [Jobs]
+      summary: List the current user jobs
+      responses:
+        '200':
+          description: Jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Job'
+    post:
+      tags: [Jobs]
+      summary: Create a job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobInput'
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job:
+                    $ref: '#/components/schemas/Job'
+  /jobs/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: The job id
+        schema:
+          type: string
+          pattern: '^[0-9a-fA-F]{24}$'
+    get:
+      tags: [Jobs]
+      summary: Get a job
+      responses:
+        '200':
+          description: Job
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job:
+                    $ref: '#/components/schemas/Job'
+    patch:
+      tags: [Jobs]
+      summary: Update a job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobUpdateInput'
+      responses:
+        '200':
+          description: Job updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job:
+                    $ref: '#/components/schemas/Job'
+    delete:
+      tags: [Jobs]
+      summary: Delete a job
+      responses:
+        '200':
+          description: Job removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
 components:
   securitySchemes:
     bearerAuth:
@@ -124,4 +210,90 @@ components:
         user:
           $ref: '#/components/schemas/UserProfile'
         token:
+          type: string
+    Job:
+      type: object
+      properties:
+        _id:
+          type: string
+        company:
+          type: string
+          maxLength: 50
+          example: Acme
+        position:
+          type: string
+          maxLength: 100
+          example: Backend Developer
+        status:
+          type: string
+          enum: [pending, interview, offer, declined]
+          default: pending
+        jobType:
+          type: string
+          enum: [full-time, part-time, remote, internship]
+          default: full-time
+        jobLocation:
+          type: string
+          maxLength: 100
+          example: Tunis
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    JobInput:
+      type: object
+      required: [company, position]
+      properties:
+        company:
+          type: string
+          maxLength: 50
+          example: Acme
+        position:
+          type: string
+          maxLength: 100
+          example: Backend Developer
+        status:
+          type: string
+          enum: [pending, interview, offer, declined]
+          default: pending
+        jobType:
+          type: string
+          enum: [full-time, part-time, remote, internship]
+          default: full-time
+        jobLocation:
+          type: string
+          maxLength: 100
+          example: Tunis
+    JobUpdateInput:
+      type: object
+      minProperties: 1
+      properties:
+        company:
+          type: string
+          maxLength: 50
+          example: Acme
+        position:
+          type: string
+          maxLength: 100
+          example: Backend Developer
+        status:
+          type: string
+          enum: [pending, interview, offer, declined]
+          default: pending
+        jobType:
+          type: string
+          enum: [full-time, part-time, remote, internship]
+          default: full-time
+        jobLocation:
+          type: string
+          maxLength: 100
+          example: Tunis
+    Message:
+      type: object
+      properties:
+        msg:
           type: string
