@@ -131,6 +131,17 @@ paths:
                 properties:
                   job:
                     $ref: '#/components/schemas/Job'
+  /jobs/stats:
+    get:
+      tags: [Jobs]
+      summary: Job counts per status and per month
+      responses:
+        '200':
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
   /jobs/{id}:
     parameters:
       - in: path
@@ -338,3 +349,28 @@ components:
           type: integer
         numOfPages:
           type: integer
+    Stats:
+      type: object
+      properties:
+        defaultStats:
+          type: object
+          properties:
+            pending:
+              type: integer
+            interview:
+              type: integer
+            offer:
+              type: integer
+            declined:
+              type: integer
+        monthlyApplications:
+          type: array
+          description: The six most recent months with applications, oldest first
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                example: 2023-09
+              count:
+                type: integer
