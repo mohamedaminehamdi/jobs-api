@@ -66,6 +66,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get the current user
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserProfile'
+  /auth/updateUser:
+    patch:
+      tags: [Auth]
+      summary: Update the current user profile
+      description: Returns a fresh token because the token carries the user name.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserInput'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /auth/updatePassword:
+    patch:
+      tags: [Auth]
+      summary: Change the current user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordInput'
+      responses:
+        '200':
+          description: Password updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
   /jobs:
     get:
       tags: [Jobs]
@@ -252,6 +301,32 @@ components:
           $ref: '#/components/schemas/UserProfile'
         token:
           type: string
+    UpdateUserInput:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+        email:
+          type: string
+          format: email
+        lastName:
+          type: string
+          maxLength: 50
+        location:
+          type: string
+          maxLength: 100
+    UpdatePasswordInput:
+      type: object
+      required: [oldPassword, newPassword]
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 6
     Job:
       type: object
       properties:
