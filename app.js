@@ -35,6 +35,9 @@ app.use(xss());
 app.use(mongoSanitize());
 app.use(compression());
 
+app.get('/', (req, res) => {
+  res.send('<h1>Jobs API</h1><a href="/api-docs">Documentation</a>');
+});
 app.get('/api/v1/health', (req, res) => res.json({ status: 'ok' }));
 
 const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
