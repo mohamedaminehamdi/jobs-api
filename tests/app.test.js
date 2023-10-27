@@ -34,3 +34,17 @@ describe('request body', () => {
     expect(res.body).toEqual({ msg: 'Malformed JSON in request body' });
   });
 });
+
+describe('docs', () => {
+  it('links to the docs from the root route', async () => {
+    const res = await request(server).get('/');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('href="/api-docs"');
+  });
+
+  it('serves Swagger UI', async () => {
+    const res = await request(server).get('/api-docs/');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('swagger-ui');
+  });
+});
