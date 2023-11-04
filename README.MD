@@ -1,69 +1,24 @@
-#### Setup
+# Jobs API
 
-```bash
-npm install && npm start
-```
+[![CI](https://github.com/mohamedaminehamdi/Jobs-Api/actions/workflows/ci.yml/badge.svg)](https://github.com/mohamedaminehamdi/Jobs-Api/actions/workflows/ci.yml)
 
-#### Database Connection
+A REST API for keeping track of job applications. Users register, log in with a JWT and manage
+their own list of applications: where they applied, for which position, and how far it went.
 
-1. Import connect.js
-2. Invoke in start()
-3. Setup .env in the root
-4. Add MONGO_URI with correct value
+## Features
 
-#### Routers
+- JWT authentication with bcrypt-hashed passwords
+- Job applications CRUD, scoped to the logged-in user
+- Search, filtering, sorting and pagination on the job list
+- Stats endpoint: applications per status and per month
+- Profile and password updates
+- Read-only demo account for showcasing the API
+- Request validation with Joi
+- Security middleware: helmet, CORS, rate limiting, XSS and NoSQL-injection sanitizing
+- OpenAPI 3 documentation served with Swagger UI
+- Jest + Supertest test suite running against an in-memory MongoDB
+- Docker and docker-compose setup, GitHub Actions CI
 
-- auth.js
-- jobs.js
+## Tech stack
 
-#### User Model
-
-Email Validation Regex
-
-```regex
-/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-```
-
-#### Register User
-
-- Validate - name, email, password - with Mongoose
-- Hash Password (with bcryptjs)
-- Save User
-- Generate Token
-- Send Response with Token
-
-#### Login User
-
-- Validate - email, password - in controller
-- If email or password is missing, throw BadRequestError
-- Find User
-- Compare Passwords
-- If no user or password does not match, throw UnauthenticatedError
-- If correct, generate Token
-- Send Response with Token
-
-#### Mongoose Errors
-
-- Validation Errors
-- Duplicate (Email)
-- Cast Error
-
-#### Security
-
-- helmet
-- cors
-- xss-clean
-- express-rate-limit
-
-Swagger UI
-
-```yaml
-/jobs/{id}:
-  parameters:
-    - in: path
-      name: id
-      schema:
-        type: string
-      required: true
-      description: the job id
-```
+Node.js, Express 4, MongoDB with Mongoose, Joi, JSON Web Tokens, Jest, Supertest.
