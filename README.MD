@@ -52,3 +52,48 @@ The API listens on `http://localhost:3000` and the docs are at
 | `DEMO_USER_PASSWORD` | no       | Password of the read-only demo account              |
 
 The server refuses to start when a required variable is missing.
+
+## API
+
+All routes are prefixed with `/api/v1`. Protected routes expect an `Authorization: Bearer <token>`
+header; the token comes from register or login. Errors are returned as `{ "msg": "..." }`.
+
+| Method | Route                  | Auth | Description                          |
+| ------ | ---------------------- | ---- | ------------------------------------ |
+| POST   | `/auth/register`       |      | Create an account                    |
+| POST   | `/auth/login`          |      | Log in                               |
+| GET    | `/auth/me`             | yes  | Current user profile                 |
+| PATCH  | `/auth/updateUser`     | yes  | Update name, last name, email, place |
+| PATCH  | `/auth/updatePassword` | yes  | Change password                      |
+| GET    | `/jobs`                | yes  | List jobs                            |
+| POST   | `/jobs`                | yes  | Create a job                         |
+| GET    | `/jobs/stats`          | yes  | Counts per status and per month      |
+| GET    | `/jobs/:id`            | yes  | Get a job                            |
+| PATCH  | `/jobs/:id`            | yes  | Update a job                         |
+| DELETE | `/jobs/:id`            | yes  | Delete a job                         |
+| GET    | `/health`              |      | Health check                         |
+
+### Listing jobs
+
+`GET /jobs` accepts these query parameters:
+
+| Param     | Values                                                  | Default  |
+| --------- | ------------------------------------------------------- | -------- |
+| `status`  | `all`, `pending`, `interview`, `offer`, `declined`      | `all`    |
+| `jobType` | `all`, `full-time`, `part-time`, `remote`, `internship` | `all`    |
+| `search`  | text matched against position and company               |          |
+| `sort`    | `latest`, `oldest`, `a-z`, `z-a`                        | `latest` |
+| `page`    | page number, starting at 1                              | `1`      |
+| `limit`   | page size, 1 to 100                                     | `10`     |
+
+The response contains `jobs`, `totalJobs` and `numOfPages`.
+
+### Example
+
+```bash
+TOKEN=$(curl -s -X POST localhost:3000/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"demo@example.com","password":"demo-password"}' | jq -r .token)
+
+curl -s "localhost:3000/api/v1/jobs?status=interview&sort=a-z" -H "Authorization: Bearer $TOKEN"
+```
