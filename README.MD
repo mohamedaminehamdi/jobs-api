@@ -97,3 +97,46 @@ TOKEN=$(curl -s -X POST localhost:3000/api/v1/auth/login \
 
 curl -s "localhost:3000/api/v1/jobs?status=interview&sort=a-z" -H "Authorization: Bearer $TOKEN"
 ```
+
+## Docker
+
+```bash
+JWT_SECRET=something-long-and-random docker compose up --build
+```
+
+This starts the API on port 3000 and a MongoDB container with a persistent volume.
+
+## Seeding
+
+`mock-data.json` holds 40 sample applications spread over several months.
+
+```bash
+npm run seed                       # creates the read-only demo user and gives it the mock jobs
+npm run seed -- jane@example.com   # replaces the jobs of an existing user with the mock jobs
+```
+
+With docker-compose: `docker compose exec api node populate.js`.
+
+## Testing
+
+```bash
+npm test               # run the suite
+npm run test:coverage  # with a coverage report in ./coverage
+```
+
+Tests use `mongodb-memory-server`, so no database needs to be running.
+
+## Scripts
+
+| Script           | Description          |
+| ---------------- | -------------------- |
+| `npm start`      | Start the server     |
+| `npm run dev`    | Start with nodemon   |
+| `npm test`       | Run the tests        |
+| `npm run lint`   | Lint with ESLint     |
+| `npm run format` | Format with Prettier |
+| `npm run seed`   | Load mock data       |
+
+## License
+
+[MIT](LICENSE)
