@@ -6,9 +6,8 @@ const { JOB_STATUS, SORT_OPTIONS } = require('../utils/constants');
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const getAllJobs = async (req, res) => {
-  const { status, jobType, search, sort, page, limit } = req.query;
-  const query = { createdBy: req.user.userId };
+const buildListQuery = (userId, { status, jobType, search }) => {
+  const query = { createdBy: userId };
   if (status && status !== 'all') {
     query.status = status;
   }
@@ -19,6 +18,12 @@ const getAllJobs = async (req, res) => {
     const pattern = new RegExp(escapeRegex(search), 'i');
     query.$or = [{ position: pattern }, { company: pattern }];
   }
+  return query;
+};
+
+const getAllJobs = async (req, res) => {
+  const { sort, page, limit } = req.query;
+  const query = buildListQuery(req.user.userId, req.query);
   const jobs = await Job.find(query)
     .sort(SORT_OPTIONS[sort])
     .skip((page - 1) * limit)
