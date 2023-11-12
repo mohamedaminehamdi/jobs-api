@@ -24,11 +24,14 @@ const buildListQuery = (userId, { status, jobType, search }) => {
 const getAllJobs = async (req, res) => {
   const { sort, page, limit } = req.query;
   const query = buildListQuery(req.user.userId, req.query);
-  const jobs = await Job.find(query)
-    .sort(SORT_OPTIONS[sort])
-    .skip((page - 1) * limit)
-    .limit(limit);
-  const totalJobs = await Job.countDocuments(query);
+  const [jobs, totalJobs] = await Promise.all([
+    Job.find(query)
+      .sort(SORT_OPTIONS[sort])
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+    Job.countDocuments(query),
+  ]);
   res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages: Math.ceil(totalJobs / limit) });
 };
 
