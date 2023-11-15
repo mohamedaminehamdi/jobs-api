@@ -1,4 +1,5 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 const server = require('./server');
 const User = require('../models/User');
 
@@ -87,6 +88,15 @@ describe('authentication middleware', () => {
       .get('/api/v1/jobs')
       .set('Authorization', 'Bearer not-a-token');
     expect(res.status).toBe(401);
+  });
+
+  it('tells the client when the token has expired', async () => {
+    const token = jwt.sign({ userId: '64e3a1f0c2a4b5d6e7f80910', name: 'Jane' }, 'test-secret', {
+      expiresIn: -10,
+    });
+    const res = await request(server).get('/api/v1/jobs').set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(401);
+    expect(res.body.msg).toBe('Token expired, please log in again');
   });
 
   it('rejects a non-bearer scheme', async () => {

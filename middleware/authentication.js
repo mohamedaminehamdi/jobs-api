@@ -11,6 +11,9 @@ const auth = async (req, res, next) => {
   try {
     payload = jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      throw new UnauthenticatedError('Token expired, please log in again');
+    }
     throw new UnauthenticatedError('Authentication invalid');
   }
   // attach the user to the request; next() stays outside the try so
