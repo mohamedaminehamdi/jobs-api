@@ -16,6 +16,16 @@ describe('request validation', () => {
     expect(res.body.msg).toMatch(/password length must be at least 6/);
   });
 
+  it('caps the password at 72 characters', async () => {
+    const res = await register({
+      name: 'Jane',
+      email: 'jane@example.com',
+      password: 'x'.repeat(73),
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.msg).toMatch(/password length must be less than or equal to 72/);
+  });
+
   describe('jobs', () => {
     let token;
     beforeEach(async () => {

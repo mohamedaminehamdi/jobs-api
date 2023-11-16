@@ -3,7 +3,8 @@ const Joi = require('joi');
 const register = Joi.object({
   name: Joi.string().trim().min(3).max(50).required(),
   email: Joi.string().trim().lowercase().email().required(),
-  password: Joi.string().min(6).required(),
+  // bcrypt ignores everything after 72 bytes
+  password: Joi.string().min(6).max(72).required(),
   lastName: Joi.string().trim().max(50).allow(''),
   location: Joi.string().trim().max(100).allow(''),
 });
@@ -22,7 +23,7 @@ const updateUser = Joi.object({
 
 const updatePassword = Joi.object({
   oldPassword: Joi.string().required(),
-  newPassword: Joi.string().min(6).required(),
+  newPassword: Joi.string().min(6).max(72).required(),
 });
 
 module.exports = { register, login, updateUser, updatePassword };
