@@ -25,11 +25,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
+                $ref: '#/components/schemas/Health'
+        '503':
+          description: Database is not connected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
   /auth/register:
     post:
       tags: [Auth]
@@ -328,6 +330,18 @@ components:
           schema:
             $ref: '#/components/schemas/Message'
   schemas:
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+        uptime:
+          type: integer
+          description: Seconds since the process started
+        database:
+          type: string
+          enum: [connected, disconnected]
     RegisterInput:
       type: object
       required: [name, email, password]

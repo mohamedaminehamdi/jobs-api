@@ -13,7 +13,8 @@ describe('GET /api/v1/health', () => {
   it('reports the service is up', async () => {
     const res = await request(server).get('/api/v1/health');
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ status: 'ok' });
+    expect(res.body).toMatchObject({ status: 'ok', database: 'connected' });
+    expect(typeof res.body.uptime).toBe('number');
   });
 });
 

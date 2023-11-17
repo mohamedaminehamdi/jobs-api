@@ -10,6 +10,7 @@ const compression = require('compression');
 
 const path = require('path');
 const express = require('express');
+const mongoose = require('mongoose');
 const swaggerUI = require('swagger-ui-express');
 const YAML = require('yamljs');
 const app = express();
@@ -38,7 +39,14 @@ app.use(compression());
 app.get('/', (req, res) => {
   res.send('<h1>Jobs API</h1><a href="/api-docs">Documentation</a>');
 });
-app.get('/api/v1/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/api/v1/health', (req, res) => {
+  const connected = mongoose.connection.readyState === 1;
+  res.status(connected ? 200 : 503).json({
+    status: connected ? 'ok' : 'degraded',
+    uptime: Math.round(process.uptime()),
+    database: connected ? 'connected' : 'disconnected',
+  });
+});
 
 const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
