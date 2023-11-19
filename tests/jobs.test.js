@@ -28,6 +28,16 @@ describe('jobs', () => {
     });
   });
 
+  it('stores optional notes', async () => {
+    const res = await createJob(token, {
+      company: 'Acme',
+      position: 'Dev',
+      notes: '  Referred by Sam, follow up next week  ',
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.job.notes).toBe('Referred by Sam, follow up next week');
+  });
+
   it('requires company and position', async () => {
     const res = await createJob(token, {});
     expect(res.status).toBe(400);

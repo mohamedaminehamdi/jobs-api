@@ -1,21 +1,18 @@
 const Joi = require('joi');
 const { JOB_STATUS, JOB_TYPES, SORT_OPTIONS } = require('../utils/constants');
 
-const create = Joi.object({
-  company: Joi.string().trim().max(50).required(),
-  position: Joi.string().trim().max(100).required(),
-  status: Joi.string().valid(...JOB_STATUS),
-  jobType: Joi.string().valid(...JOB_TYPES),
-  jobLocation: Joi.string().trim().max(100).allow(''),
-});
-
-const update = Joi.object({
+const jobFields = {
   company: Joi.string().trim().max(50),
   position: Joi.string().trim().max(100),
   status: Joi.string().valid(...JOB_STATUS),
   jobType: Joi.string().valid(...JOB_TYPES),
   jobLocation: Joi.string().trim().max(100).allow(''),
-}).min(1);
+  notes: Joi.string().trim().max(500).allow(''),
+};
+
+const create = Joi.object(jobFields).fork(['company', 'position'], (field) => field.required());
+
+const update = Joi.object(jobFields).min(1);
 
 const list = Joi.object({
   status: Joi.string().valid('all', ...JOB_STATUS),
