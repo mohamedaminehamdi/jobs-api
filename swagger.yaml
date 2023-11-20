@@ -445,6 +445,9 @@ components:
           type: string
           maxLength: 100
           example: Tunis
+        notes:
+          type: string
+          maxLength: 500
         createdBy:
           type: string
         createdAt:
@@ -477,6 +480,9 @@ components:
           type: string
           maxLength: 100
           example: Tunis
+        notes:
+          type: string
+          maxLength: 500
     JobUpdateInput:
       type: object
       minProperties: 1
@@ -501,6 +507,9 @@ components:
           type: string
           maxLength: 100
           example: Tunis
+        notes:
+          type: string
+          maxLength: 500
     Message:
       type: object
       properties:
