@@ -64,7 +64,17 @@
       "!**/node_modules/**",
       "!coverage/**",
       "!tests/**",
-      "!server.js"
-    ]
+      "!server.js",
+      "!populate.js",
+      "!db/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    }
   }
 }
