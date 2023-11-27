@@ -4,6 +4,28 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Optional `notes` field on jobs
+- Health check reports uptime and database state, and returns 503 when MongoDB is down
+- Healthchecks for the docker-compose services
+- Coverage thresholds, coverage report uploaded from CI
+- Contributing guide, issue and pull request templates
+
+### Changed
+
+- Upgraded Mongoose to v8 and express-rate-limit to v7
+- Job list runs the page query and the count in parallel and returns lean documents
+- Unexpected errors are logged, and their details are hidden in production
+- `JWT_LIFETIME` defaults to `1d`
+
+### Fixed
+
+- Expired tokens get a clear "Token expired" message
+- Passwords longer than 72 characters are rejected instead of being silently truncated by bcrypt
+
 ## [1.0.0] - 2023-11-09
 
 ### Added
