@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.1.0] - 2023-11-28
 
 ### Added
 
@@ -57,4 +57,5 @@ All notable changes to this project are documented here. The format follows
 - Errors thrown after authentication were reported as 401
 - Unknown routes and malformed JSON now return JSON errors
 
+[1.1.0]: https://github.com/mohamedaminehamdi/Jobs-Api/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/mohamedaminehamdi/Jobs-Api/releases/tag/v1.0.0
