@@ -33,6 +33,14 @@ const JobSchema = new mongoose.Schema(
       trim: true,
       maxlength: 500,
     },
+    salaryMin: {
+      type: Number,
+      min: 0,
+    },
+    salaryMax: {
+      type: Number,
+      min: 0,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
