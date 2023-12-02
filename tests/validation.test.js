@@ -64,3 +64,37 @@ describe('request validation', () => {
     });
   });
 });
+
+describe('salary range', () => {
+  let token;
+  const create = (job) =>
+    request(server)
+      .post('/api/v1/jobs')
+      .set('Authorization', token)
+      .send({ company: 'Acme', position: 'Dev', ...job });
+
+  beforeEach(async () => {
+    const res = await register({ name: 'Jane', email: 'jane@example.com', password: 'secret' });
+    token = `Bearer ${res.body.token}`;
+  });
+
+  it('stores a salary range', async () => {
+    const res = await create({ salaryMin: 3000, salaryMax: 4500 });
+    expect(res.status).toBe(201);
+    expect(res.body.job).toMatchObject({ salaryMin: 3000, salaryMax: 4500 });
+  });
+
+  it('accepts only one bound', async () => {
+    expect((await create({ salaryMax: 4500 })).status).toBe(201);
+  });
+
+  it('rejects a maximum below the minimum', async () => {
+    const res = await create({ salaryMin: 5000, salaryMax: 4500 });
+    expect(res.status).toBe(400);
+    expect(res.body.msg).toMatch(/salaryMax must be greater than or equal to/);
+  });
+
+  it('rejects negative salaries', async () => {
+    expect((await create({ salaryMin: -1 })).status).toBe(400);
+  });
+});
