@@ -51,6 +51,17 @@ describe('request validation', () => {
       expect(res.body.job.createdBy).not.toBe('64e3a1f0c2a4b5d6e7f80910');
     });
 
+    it('only accepts http(s) posting links', async () => {
+      const post = (jobUrl) =>
+        request(server)
+          .post('/api/v1/jobs')
+          .set('Authorization', token)
+          .send({ company: 'Acme', position: 'Dev', jobUrl });
+      expect((await post('https://jobs.example.com/123')).status).toBe(201);
+      expect((await post('javascript:alert(1)')).status).toBe(400);
+      expect((await post('not a url')).status).toBe(400);
+    });
+
     it('rejects an empty update', async () => {
       const created = await request(server)
         .post('/api/v1/jobs')

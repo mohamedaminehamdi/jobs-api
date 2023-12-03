@@ -33,6 +33,11 @@ const JobSchema = new mongoose.Schema(
       trim: true,
       maxlength: 500,
     },
+    jobUrl: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
     salaryMin: {
       type: Number,
       min: 0,

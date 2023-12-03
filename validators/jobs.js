@@ -8,6 +8,11 @@ const jobFields = {
   jobType: Joi.string().valid(...JOB_TYPES),
   jobLocation: Joi.string().trim().max(100).allow(''),
   notes: Joi.string().trim().max(500).allow(''),
+  jobUrl: Joi.string()
+    .trim()
+    .uri({ scheme: ['http', 'https'] })
+    .max(500)
+    .allow(''),
   salaryMin: Joi.number().integer().min(0),
   salaryMax: Joi.number()
     .integer()
