@@ -61,17 +61,13 @@ const updateJob = async (req, res) => {
     user: { userId },
     params: { id: jobId },
   } = req;
-  const job = await Job.findOneAndUpdate(
-    {
-      _id: jobId,
-      createdBy: userId,
-    },
-    req.body,
-    { new: true, runValidators: true },
-  );
+  const job = await Job.findOne({ _id: jobId, createdBy: userId });
   if (!job) {
     throw new NotFoundError(`No job with id : ${jobId}`);
   }
+  // save() instead of findOneAndUpdate so the status history hook runs
+  job.set(req.body);
+  await job.save();
   res.status(StatusCodes.OK).json({ job });
 };
 

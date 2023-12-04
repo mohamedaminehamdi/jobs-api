@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 const { JOB_STATUS, JOB_TYPES } = require('../utils/constants');
 
+const StatusChangeSchema = new mongoose.Schema(
+  {
+    status: { type: String, enum: JOB_STATUS, required: true },
+    changedAt: { type: Date, default: Date.now },
+  },
+  { _id: false },
+);
+
 const JobSchema = new mongoose.Schema(
   {
     company: {
@@ -46,6 +54,7 @@ const JobSchema = new mongoose.Schema(
       type: Number,
       min: 0,
     },
+    statusHistory: [StatusChangeSchema],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -54,6 +63,13 @@ const JobSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+// keep a timeline of every status the application went through
+JobSchema.pre('save', function () {
+  if (this.isNew || this.isModified('status')) {
+    this.statusHistory.push({ status: this.status });
+  }
+});
 
 // list queries filter by owner and sort by date
 JobSchema.index({ createdBy: 1, createdAt: -1 });
