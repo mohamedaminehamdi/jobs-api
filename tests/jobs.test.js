@@ -38,6 +38,26 @@ describe('jobs', () => {
     expect(res.body.job.notes).toBe('Referred by Sam, follow up next week');
   });
 
+  it('records the initial status and every change', async () => {
+    const { body } = await createJob(token);
+    const patch = (update) =>
+      request(server)
+        .patch(`/api/v1/jobs/${body.job._id}`)
+        .set('Authorization', token)
+        .send(update);
+
+    await patch({ status: 'interview' });
+    await patch({ notes: 'no status change here' });
+    const res = await patch({ status: 'offer' });
+
+    expect(res.body.job.statusHistory.map((entry) => entry.status)).toEqual([
+      'pending',
+      'interview',
+      'offer',
+    ]);
+    expect(Date.parse(res.body.job.statusHistory[0].changedAt)).not.toBeNaN();
+  });
+
   it('requires company and position', async () => {
     const res = await createJob(token, {});
     expect(res.status).toBe(400);
