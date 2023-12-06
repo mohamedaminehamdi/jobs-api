@@ -358,6 +358,7 @@ components:
         password:
           type: string
           minLength: 6
+          maxLength: 72
           example: secret123
         lastName:
           type: string
@@ -420,6 +421,7 @@ components:
         newPassword:
           type: string
           minLength: 6
+          maxLength: 72
     Job:
       type: object
       properties:
@@ -448,6 +450,32 @@ components:
         notes:
           type: string
           maxLength: 500
+        jobUrl:
+          type: string
+          format: uri
+          maxLength: 500
+          example: https://jobs.example.com/backend-developer
+        salaryMin:
+          type: integer
+          minimum: 0
+          example: 3000
+        salaryMax:
+          type: integer
+          minimum: 0
+          description: Must be greater than or equal to salaryMin
+          example: 4500
+        statusHistory:
+          type: array
+          readOnly: true
+          description: Every status the application went through, oldest first
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              changedAt:
+                type: string
+                format: date-time
         createdBy:
           type: string
         createdAt:
@@ -483,6 +511,20 @@ components:
         notes:
           type: string
           maxLength: 500
+        jobUrl:
+          type: string
+          format: uri
+          maxLength: 500
+          example: https://jobs.example.com/backend-developer
+        salaryMin:
+          type: integer
+          minimum: 0
+          example: 3000
+        salaryMax:
+          type: integer
+          minimum: 0
+          description: Must be greater than or equal to salaryMin
+          example: 4500
     JobUpdateInput:
       type: object
       minProperties: 1
@@ -510,6 +552,20 @@ components:
         notes:
           type: string
           maxLength: 500
+        jobUrl:
+          type: string
+          format: uri
+          maxLength: 500
+          example: https://jobs.example.com/backend-developer
+        salaryMin:
+          type: integer
+          minimum: 0
+          example: 3000
+        salaryMax:
+          type: integer
+          minimum: 0
+          description: Must be greater than or equal to salaryMin
+          example: 4500
     Message:
       type: object
       properties:
