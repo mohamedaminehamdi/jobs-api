@@ -6,7 +6,7 @@ const { JOB_STATUS, SORT_OPTIONS } = require('../utils/constants');
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const buildListQuery = (userId, { status, jobType, search }) => {
+const buildListQuery = (userId, { status, jobType, search, from, to }) => {
   const query = { createdBy: userId };
   if (status && status !== 'all') {
     query.status = status;
@@ -17,6 +17,11 @@ const buildListQuery = (userId, { status, jobType, search }) => {
   if (search) {
     const pattern = new RegExp(escapeRegex(search), 'i');
     query.$or = [{ position: pattern }, { company: pattern }];
+  }
+  if (from || to) {
+    query.createdAt = {};
+    if (from) query.createdAt.$gte = from;
+    if (to) query.createdAt.$lte = to;
   }
   return query;
 };

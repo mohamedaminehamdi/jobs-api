@@ -28,6 +28,10 @@ const list = Joi.object({
   status: Joi.string().valid('all', ...JOB_STATUS),
   jobType: Joi.string().valid('all', ...JOB_TYPES),
   search: Joi.string().trim().allow(''),
+  from: Joi.date().iso(),
+  to: Joi.date()
+    .iso()
+    .when('from', { is: Joi.exist(), then: Joi.date().min(Joi.ref('from')) }),
   sort: Joi.string()
     .valid(...Object.keys(SORT_OPTIONS))
     .default('latest'),
