@@ -8,8 +8,9 @@ const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const buildListQuery = (userId, { status, jobType, search, from, to }) => {
   const query = { createdBy: userId };
-  if (status && status !== 'all') {
-    query.status = status;
+  const statuses = status ? status.split(',') : [];
+  if (statuses.length && !statuses.includes('all')) {
+    query.status = { $in: statuses };
   }
   if (jobType && jobType !== 'all') {
     query.jobType = jobType;

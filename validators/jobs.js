@@ -24,8 +24,15 @@ const create = Joi.object(jobFields).fork(['company', 'position'], (field) => fi
 
 const update = Joi.object(jobFields).min(1);
 
+// a single status or a comma-separated list, e.g. interview,offer
+const statusList = Joi.string().custom((value, helpers) =>
+  value.split(',').every((status) => status === 'all' || JOB_STATUS.includes(status))
+    ? value
+    : helpers.message(`status must be all or a comma-separated list of: ${JOB_STATUS.join(', ')}`),
+);
+
 const list = Joi.object({
-  status: Joi.string().valid('all', ...JOB_STATUS),
+  status: statusList,
   jobType: Joi.string().valid('all', ...JOB_TYPES),
   search: Joi.string().trim().allow(''),
   from: Joi.date().iso(),
