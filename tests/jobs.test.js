@@ -1,5 +1,6 @@
 const request = require('supertest');
 const server = require('./server');
+const Job = require('../models/Job');
 
 const register = async (email = 'jane@example.com') => {
   const res = await request(server)
@@ -207,6 +208,28 @@ describe('GET /api/v1/jobs query options', () => {
     const res = await list({ sort: 'oldest', page: 2, limit: 2 });
     expect(res.body).toMatchObject({ totalJobs: 3, numOfPages: 2 });
     expect(res.body.jobs.map((job) => job.company)).toEqual(['Initech']);
+  });
+
+  it('filters by several statuses', async () => {
+    const res = await list({ status: 'interview,declined', sort: 'a-z' });
+    expect(res.body.jobs.map((job) => job.company)).toEqual(['Acme', 'Globex']);
+    expect((await list({ status: 'interview,hired' })).status).toBe(400);
+  });
+
+  it('filters by creation date', async () => {
+    // move one job back in time; createdAt is immutable through mongoose
+    const { _id } = await Job.findOne({ company: 'Globex' });
+    await Job.collection.updateOne({ _id }, { $set: { createdAt: new Date('2023-06-15') } });
+
+    const june = await list({ from: '2023-06-01', to: '2023-06-30' });
+    expect(june.body.jobs.map((job) => job.company)).toEqual(['Globex']);
+    expect((await list({ from: '2023-07-01' })).body.totalJobs).toBe(2);
+    expect((await list({ to: '2023-07-01' })).body.totalJobs).toBe(1);
+  });
+
+  it('rejects an inverted or invalid date range', async () => {
+    expect((await list({ from: '2023-07-01', to: '2023-06-01' })).status).toBe(400);
+    expect((await list({ from: 'yesterday' })).status).toBe(400);
   });
 
   it('rejects invalid query params', async () => {
