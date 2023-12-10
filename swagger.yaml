@@ -144,9 +144,10 @@ paths:
       parameters:
         - in: query
           name: status
+          description: One status, a comma-separated list such as interview,offer, or all
           schema:
             type: string
-            enum: [all, pending, interview, offer, declined]
+            example: interview,offer
         - in: query
           name: jobType
           schema:
@@ -157,6 +158,18 @@ paths:
           description: Case-insensitive match on position or company
           schema:
             type: string
+        - in: query
+          name: from
+          description: Only jobs created at or after this ISO date
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: to
+          description: Only jobs created at or before this ISO date
+          schema:
+            type: string
+            format: date-time
         - in: query
           name: sort
           schema:
