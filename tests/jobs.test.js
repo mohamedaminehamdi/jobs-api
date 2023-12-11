@@ -261,6 +261,7 @@ describe('GET /api/v1/jobs/stats', () => {
     const res = await request(server).get('/api/v1/jobs/stats').set('Authorization', token);
     expect(res.body).toEqual({
       defaultStats: { pending: 0, interview: 0, offer: 0, declined: 0 },
+      typeStats: { 'full-time': 0, 'part-time': 0, remote: 0, internship: 0 },
       monthlyApplications: [],
     });
   });

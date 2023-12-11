@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Job = require('../models/Job');
 const { StatusCodes } = require('http-status-codes');
 const { NotFoundError } = require('../errors');
-const { JOB_STATUS, SORT_OPTIONS } = require('../utils/constants');
+const { JOB_STATUS, JOB_TYPES, SORT_OPTIONS } = require('../utils/constants');
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -94,14 +94,22 @@ const deleteJob = async (req, res) => {
 
 const showStats = async (req, res) => {
   const createdBy = new mongoose.Types.ObjectId(req.user.userId);
-  const counts = await Job.aggregate([
-    { $match: { createdBy } },
-    { $group: { _id: '$status', count: { $sum: 1 } } },
+  // counts per value of a field, with every allowed value present
+  const countBy = async (field, values) => {
+    const counts = await Job.aggregate([
+      { $match: { createdBy } },
+      { $group: { _id: `$${field}`, count: { $sum: 1 } } },
+    ]);
+    const stats = Object.fromEntries(values.map((value) => [value, 0]));
+    counts.forEach(({ _id, count }) => {
+      stats[_id] = count;
+    });
+    return stats;
+  };
+  const [defaultStats, typeStats] = await Promise.all([
+    countBy('status', JOB_STATUS),
+    countBy('jobType', JOB_TYPES),
   ]);
-  const defaultStats = Object.fromEntries(JOB_STATUS.map((status) => [status, 0]));
-  counts.forEach(({ _id, count }) => {
-    defaultStats[_id] = count;
-  });
 
   // six most recent months that have applications, oldest first
   const monthly = await Job.aggregate([
@@ -120,7 +128,7 @@ const showStats = async (req, res) => {
     count,
   }));
 
-  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
+  res.status(StatusCodes.OK).json({ defaultStats, typeStats, monthlyApplications });
 };
 
 module.exports = {
