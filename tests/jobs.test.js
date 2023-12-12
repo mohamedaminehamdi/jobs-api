@@ -256,6 +256,21 @@ describe('GET /api/v1/jobs/stats', () => {
     expect(res.body.monthlyApplications).toEqual([{ date: month, count: 3 }]);
   });
 
+  it('counts jobs per type', async () => {
+    const token = await register();
+    await createJob(token, { company: 'Acme', position: 'Dev', jobType: 'remote' });
+    await createJob(token, { company: 'Globex', position: 'Dev', jobType: 'remote' });
+    await createJob(token, { company: 'Initech', position: 'Dev' });
+
+    const res = await request(server).get('/api/v1/jobs/stats').set('Authorization', token);
+    expect(res.body.typeStats).toEqual({
+      'full-time': 1,
+      'part-time': 0,
+      remote: 2,
+      internship: 0,
+    });
+  });
+
   it('returns zeros for a user without jobs', async () => {
     const token = await register();
     const res = await request(server).get('/api/v1/jobs/stats').set('Authorization', token);
