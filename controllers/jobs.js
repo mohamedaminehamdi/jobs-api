@@ -41,6 +41,39 @@ const getAllJobs = async (req, res) => {
   res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages: Math.ceil(totalJobs / limit) });
 };
 
+const CSV_COLUMNS = [
+  'company',
+  'position',
+  'status',
+  'jobType',
+  'jobLocation',
+  'salaryMin',
+  'salaryMax',
+  'jobUrl',
+  'notes',
+  'createdAt',
+];
+
+const toCsvValue = (value) => {
+  if (value === undefined || value === null) return '';
+  let text = value instanceof Date ? value.toISOString() : String(value);
+  // stop spreadsheets from evaluating user input as a formula
+  if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+  return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+};
+
+const exportJobs = async (req, res) => {
+  const jobs = await Job.find(buildListQuery(req.user.userId, req.query))
+    .sort(SORT_OPTIONS[req.query.sort])
+    .lean();
+  const rows = jobs.map((job) => CSV_COLUMNS.map((column) => toCsvValue(job[column])).join(','));
+  res
+    .status(StatusCodes.OK)
+    .attachment('jobs.csv')
+    .type('text/csv')
+    .send([CSV_COLUMNS.join(','), ...rows].join('\n'));
+};
+
 const getJob = async (req, res) => {
   const {
     user: { userId },
@@ -138,4 +171,5 @@ module.exports = {
   updateJob,
   deleteJob,
   showStats,
+  exportJobs,
 };

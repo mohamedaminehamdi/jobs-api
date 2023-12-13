@@ -11,6 +11,7 @@ const {
   updateJob,
   deleteJob,
   showStats,
+  exportJobs,
 } = require('../controllers/jobs');
 
 router
@@ -18,6 +19,7 @@ router
   .get(validate(schemas.list, 'query'), getAllJobs)
   .post(blockDemoUser, validate(schemas.create), createJob);
 router.get('/stats', showStats);
+router.get('/export', validate(schemas.list, 'query'), exportJobs);
 router
   .route('/:id')
   .all(validate(schemas.params, 'params'))
