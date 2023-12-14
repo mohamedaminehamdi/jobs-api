@@ -281,3 +281,54 @@ describe('GET /api/v1/jobs/stats', () => {
     });
   });
 });
+
+describe('GET /api/v1/jobs/export', () => {
+  let token;
+  const exportCsv = (query = {}) =>
+    request(server).get('/api/v1/jobs/export').query(query).set('Authorization', token);
+
+  beforeEach(async () => {
+    token = await register();
+  });
+
+  it('downloads the jobs as a CSV file', async () => {
+    await createJob(token, { company: 'Acme', position: 'Dev', salaryMin: 3000, salaryMax: 4000 });
+    const res = await exportCsv();
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toMatch(/text\/csv/);
+    expect(res.headers['content-disposition']).toMatch(/attachment; filename="jobs.csv"/);
+
+    const [header, row] = res.text.split('\n');
+    expect(header).toBe(
+      'company,position,status,jobType,jobLocation,salaryMin,salaryMax,jobUrl,notes,createdAt',
+    );
+    expect(row).toMatch(/^Acme,Dev,pending,full-time,,3000,4000,,,\d{4}-\d{2}-\d{2}T/);
+  });
+
+  it('quotes values containing commas, quotes or line breaks', async () => {
+    await createJob(token, { company: 'Acme, "Inc"', position: 'Dev', notes: 'line 1\nline 2' });
+    const res = await exportCsv();
+    expect(res.text).toContain('"Acme, ""Inc""",Dev');
+    expect(res.text).toContain('"line 1\nline 2"');
+  });
+
+  it('neutralizes spreadsheet formulas', async () => {
+    await createJob(token, { company: '=HYPERLINK("http://evil.example")', position: 'Dev' });
+    const res = await exportCsv();
+    expect(res.text).toContain(`"'=HYPERLINK(""http://evil.example"")"`);
+  });
+
+  it('applies the list filters', async () => {
+    await createJob(token, { company: 'Acme', position: 'Dev', status: 'offer' });
+    await createJob(token, { company: 'Globex', position: 'Dev' });
+    const res = await exportCsv({ status: 'offer' });
+    expect(res.text.split('\n')).toHaveLength(2);
+    expect(res.text).toContain('Acme');
+  });
+
+  it('only exports the current user jobs', async () => {
+    await createJob(await register('other@example.com'));
+    const res = await exportCsv();
+    expect(res.text.split('\n')).toHaveLength(1);
+  });
+});
