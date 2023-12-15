@@ -238,6 +238,57 @@ paths:
                 $ref: '#/components/schemas/Stats'
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /jobs/export:
+    get:
+      tags: [Jobs]
+      summary: Download jobs as CSV
+      description: Accepts the same filters and sort as the job list; pagination is ignored.
+      parameters:
+        - in: query
+          name: status
+          description: One status, a comma-separated list such as interview,offer, or all
+          schema:
+            type: string
+            example: interview,offer
+        - in: query
+          name: jobType
+          schema:
+            type: string
+            enum: [all, full-time, part-time, remote, internship]
+        - in: query
+          name: search
+          description: Case-insensitive match on position or company
+          schema:
+            type: string
+        - in: query
+          name: from
+          description: Only jobs created at or after this ISO date
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: to
+          description: Only jobs created at or before this ISO date
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [latest, oldest, a-z, z-a]
+            default: latest
+      responses:
+        '200':
+          description: CSV file with one row per job
+          content:
+            text/csv:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /jobs/{id}:
     parameters:
       - in: path
@@ -608,6 +659,17 @@ components:
             offer:
               type: integer
             declined:
+              type: integer
+        typeStats:
+          type: object
+          properties:
+            full-time:
+              type: integer
+            part-time:
+              type: integer
+            remote:
+              type: integer
+            internship:
               type: integer
         monthlyApplications:
           type: array
