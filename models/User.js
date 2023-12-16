@@ -39,6 +39,7 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  passwordChangedAt: Date,
 });
 
 UserSchema.set('toJSON', {
@@ -50,6 +51,10 @@ UserSchema.set('toJSON', {
 
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
+  if (!this.isNew) {
+    // one second back so the token issued with the change stays valid (iat has second precision)
+    this.passwordChangedAt = new Date(Date.now() - 1000);
+  }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();

@@ -55,7 +55,8 @@ const updatePassword = async (req, res) => {
   }
   user.password = newPassword;
   await user.save();
-  res.status(StatusCodes.OK).json({ msg: 'Password updated' });
+  // tokens issued before the change are rejected from now on, so hand out a new one
+  res.status(StatusCodes.OK).json({ msg: 'Password updated', token: user.createJWT() });
 };
 
 module.exports = {
