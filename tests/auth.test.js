@@ -198,6 +198,31 @@ describe('PATCH /api/v1/auth/updatePassword', () => {
     expect((await login('new-secret')).status).toBe(200);
   });
 
+  it('rejects tokens issued before the change and returns a new one', async () => {
+    await registerAndGetToken();
+    const { _id } = await User.findOne({ email: user.email });
+    // a session that started a minute ago
+    const oldToken = `Bearer ${jwt.sign(
+      { userId: _id, name: 'Jane', iat: Math.floor(Date.now() / 1000) - 60 },
+      process.env.JWT_SECRET,
+    )}`;
+
+    const res = await updatePassword(oldToken, {
+      oldPassword: user.password,
+      newPassword: 'new-secret',
+    });
+    expect(res.status).toBe(200);
+
+    const stale = await request(server).get('/api/v1/auth/me').set('Authorization', oldToken);
+    expect(stale.status).toBe(401);
+    expect(stale.body.msg).toBe('Password changed, please log in again');
+
+    const fresh = await request(server)
+      .get('/api/v1/auth/me')
+      .set('Authorization', `Bearer ${res.body.token}`);
+    expect(fresh.status).toBe(200);
+  });
+
   it('requires the current password', async () => {
     const token = await registerAndGetToken();
     const res = await updatePassword(token, { oldPassword: 'wrong', newPassword: 'new-secret' });
