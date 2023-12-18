@@ -12,11 +12,13 @@ const {
   getCurrentUser,
   updateUser,
   updatePassword,
+  deleteAccount,
 } = require('../controllers/auth');
 
 router.post('/register', authLimiter, validate(schemas.register), register);
 router.post('/login', authLimiter, validate(schemas.login), login);
 router.get('/me', authenticate, getCurrentUser);
+router.delete('/me', authenticate, blockDemoUser, validate(schemas.deleteAccount), deleteAccount);
 router.patch('/updateUser', authenticate, blockDemoUser, validate(schemas.updateUser), updateUser);
 router.patch(
   '/updatePassword',

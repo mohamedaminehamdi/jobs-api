@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Job = require('../models/Job');
 const { StatusCodes } = require('http-status-codes');
 const { UnauthenticatedError } = require('../errors');
 
@@ -59,10 +60,22 @@ const updatePassword = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'Password updated', token: user.createJWT() });
 };
 
+const deleteAccount = async (req, res) => {
+  const user = await findCurrentUser(req);
+  const isPasswordCorrect = await user.matchPasswords(req.body.password);
+  if (!isPasswordCorrect) {
+    throw new UnauthenticatedError('Invalid credentials');
+  }
+  await Job.deleteMany({ createdBy: user._id });
+  await user.deleteOne();
+  res.status(StatusCodes.OK).json({ msg: 'Account deleted' });
+};
+
 module.exports = {
   register,
   login,
   getCurrentUser,
   updateUser,
   updatePassword,
+  deleteAccount,
 };
