@@ -2,6 +2,7 @@ const request = require('supertest');
 const jwt = require('jsonwebtoken');
 const server = require('./server');
 const User = require('../models/User');
+const Job = require('../models/Job');
 
 const user = { name: 'Jane', email: 'jane@example.com', password: 'secret123' };
 
@@ -262,6 +263,7 @@ describe('demo user', () => {
     ['delete', '/api/v1/jobs/64e3a1f0c2a4b5d6e7f80910', undefined],
     ['patch', '/api/v1/auth/updateUser', { name: 'Hacker' }],
     ['patch', '/api/v1/auth/updatePassword', { oldPassword: 'secret123', newPassword: 'x' }],
+    ['delete', '/api/v1/auth/me', { password: 'secret123' }],
   ])('cannot %s %s', async (method, url, body) => {
     const req = request(server)[method](url);
     const res = await req.set('Authorization', token).send(body);
@@ -276,5 +278,46 @@ describe('demo user', () => {
       .send({ ...user, isDemo: true });
     const created = await User.findOne({ email: user.email });
     expect(created.isDemo).toBe(false);
+  });
+});
+
+describe('DELETE /api/v1/auth/me', () => {
+  const deleteAccount = (token, body) =>
+    request(server).delete('/api/v1/auth/me').set('Authorization', token).send(body);
+
+  it('deletes the user and their jobs', async () => {
+    const token = await registerAndGetToken();
+    await request(server)
+      .post('/api/v1/jobs')
+      .set('Authorization', token)
+      .send({ company: 'Acme', position: 'Dev' });
+
+    const res = await deleteAccount(token, { password: user.password });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ msg: 'Account deleted' });
+    expect(await User.countDocuments()).toBe(0);
+    expect(await Job.countDocuments()).toBe(0);
+    expect((await request(server).get('/api/v1/jobs').set('Authorization', token)).status).toBe(
+      401,
+    );
+  });
+
+  it('requires the password', async () => {
+    const token = await registerAndGetToken();
+    expect((await deleteAccount(token, {})).status).toBe(400);
+    expect((await deleteAccount(token, { password: 'wrong' })).status).toBe(401);
+    expect(await User.countDocuments()).toBe(1);
+  });
+
+  it('keeps other users data', async () => {
+    const other = await registerAndGetToken({ ...user, email: 'other@example.com' });
+    await request(server)
+      .post('/api/v1/jobs')
+      .set('Authorization', other)
+      .send({ company: 'Acme', position: 'Dev' });
+    const token = await registerAndGetToken();
+    await deleteAccount(token, { password: user.password });
+    expect(await User.countDocuments()).toBe(1);
+    expect(await Job.countDocuments()).toBe(1);
   });
 });
