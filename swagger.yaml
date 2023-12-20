@@ -90,6 +90,28 @@ paths:
                     $ref: '#/components/schemas/UserProfile'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Auth]
+      summary: Delete the current account and all its jobs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountInput'
+      responses:
+        '200':
+          description: Account deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /auth/updateUser:
     patch:
       tags: [Auth]
@@ -486,6 +508,13 @@ components:
           type: string
           minLength: 6
           maxLength: 72
+    DeleteAccountInput:
+      type: object
+      required: [password]
+      properties:
+        password:
+          type: string
+          description: Current password, to confirm the deletion
     Job:
       type: object
       properties:
