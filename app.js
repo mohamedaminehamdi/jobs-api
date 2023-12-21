@@ -15,6 +15,7 @@ const swaggerUI = require('swagger-ui-express');
 const YAML = require('yamljs');
 const app = express();
 
+const requestId = require('./middleware/request-id');
 const authenticate = require('./middleware/authentication');
 const { apiLimiter } = require('./middleware/rate-limit');
 
@@ -26,8 +27,16 @@ const authRouter = require('./routes/auth');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
+app.use(requestId);
 if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+  morgan.token('id', (req) => req.id);
+  app.use(
+    morgan(
+      process.env.NODE_ENV === 'production'
+        ? ':id :remote-addr ":method :url HTTP/:http-version" :status :res[content-length] ":user-agent" :response-time ms'
+        : ':id :method :url :status :response-time ms',
+    ),
+  );
 }
 app.use(express.json({ limit: '10kb' }));
 app.use(helmet());

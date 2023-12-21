@@ -24,7 +24,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     customError.msg = `No item found with id : ${err.value}`;
   }
   if (customError.statusCode >= 500) {
-    console.error(err);
+    console.error(`[${req.id}]`, err);
     // never leak internals to clients in production
     if (process.env.NODE_ENV === 'production') {
       customError.msg = 'Something went wrong, please try again later';
