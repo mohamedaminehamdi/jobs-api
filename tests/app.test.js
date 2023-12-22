@@ -49,3 +49,24 @@ describe('docs', () => {
     expect(res.text).toContain('swagger-ui');
   });
 });
+
+describe('request ids', () => {
+  it('generates an id for every response', async () => {
+    const first = await request(server).get('/api/v1/health');
+    const second = await request(server).get('/api/v1/health');
+    expect(first.headers['x-request-id']).toMatch(/^[0-9a-f-]{36}$/);
+    expect(first.headers['x-request-id']).not.toBe(second.headers['x-request-id']);
+  });
+
+  it('keeps a well-formed incoming id', async () => {
+    const res = await request(server).get('/api/v1/health').set('X-Request-Id', 'proxy-abc_123');
+    expect(res.headers['x-request-id']).toBe('proxy-abc_123');
+  });
+
+  it('replaces an incoming id that could forge log lines', async () => {
+    const res = await request(server)
+      .get('/api/v1/health')
+      .set('X-Request-Id', 'abc "GET /admin" 200');
+    expect(res.headers['x-request-id']).toMatch(/^[0-9a-f-]{36}$/);
+  });
+});
