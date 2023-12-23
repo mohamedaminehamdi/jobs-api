@@ -19,6 +19,11 @@ const start = async () => {
 
     const shutdown = (signal) => {
       console.log(`${signal} received, shutting down...`);
+      // don't wait forever on keep-alive connections or a stuck database
+      setTimeout(() => {
+        console.error('Graceful shutdown timed out, forcing exit');
+        process.exit(1);
+      }, 10000).unref();
       server.close(async () => {
         await mongoose.connection.close();
         process.exit(0);
