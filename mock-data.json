@@ -5,7 +5,9 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Sousse",
-    "createdAt": "2023-04-03T05:19:49.000Z"
+    "createdAt": "2023-04-03T05:19:49.000Z",
+    "salaryMin": 4200,
+    "salaryMax": 4600
   },
   {
     "company": "Globex",
@@ -13,7 +15,10 @@
     "status": "pending",
     "jobType": "internship",
     "jobLocation": "Paris",
-    "createdAt": "2023-04-29T04:12:59.000Z"
+    "createdAt": "2023-04-29T04:12:59.000Z",
+    "salaryMin": 4100,
+    "salaryMax": 4500,
+    "jobUrl": "https://careers.globex.example/software-engineer-intern"
   },
   {
     "company": "Initech",
@@ -21,7 +26,10 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Dubai",
-    "createdAt": "2023-05-03T14:04:08.000Z"
+    "createdAt": "2023-05-03T14:04:08.000Z",
+    "salaryMin": 5900,
+    "salaryMax": 7000,
+    "jobUrl": "https://careers.initech.example/junior-software-engineer"
   },
   {
     "company": "Massive Dynamic",
@@ -37,7 +45,10 @@
     "status": "pending",
     "jobType": "full-time",
     "jobLocation": "Paris",
-    "createdAt": "2023-05-16T05:40:50.000Z"
+    "createdAt": "2023-05-16T05:40:50.000Z",
+    "salaryMin": 5900,
+    "salaryMax": 7800,
+    "jobUrl": "https://careers.acmecorp.example/junior-software-engineer"
   },
   {
     "company": "Tyrell Corp",
@@ -45,7 +56,8 @@
     "status": "declined",
     "jobType": "full-time",
     "jobLocation": "Amsterdam",
-    "createdAt": "2023-05-21T11:27:50.000Z"
+    "createdAt": "2023-05-21T11:27:50.000Z",
+    "jobUrl": "https://careers.tyrellcorp.example/frontend-developer"
   },
   {
     "company": "Hooli",
@@ -53,7 +65,10 @@
     "status": "interview",
     "jobType": "internship",
     "jobLocation": "Sfax",
-    "createdAt": "2023-05-21T20:10:22.000Z"
+    "createdAt": "2023-05-21T20:10:22.000Z",
+    "salaryMin": 2000,
+    "salaryMax": 3600,
+    "jobUrl": "https://careers.hooli.example/platform-engineer"
   },
   {
     "company": "Umbrella",
@@ -61,7 +76,9 @@
     "status": "offer",
     "jobType": "internship",
     "jobLocation": "Sousse",
-    "createdAt": "2023-05-27T04:35:15.000Z"
+    "createdAt": "2023-05-27T04:35:15.000Z",
+    "salaryMin": 4400,
+    "salaryMax": 4800
   },
   {
     "company": "Wonka Industries",
@@ -69,7 +86,10 @@
     "status": "declined",
     "jobType": "internship",
     "jobLocation": "Berlin",
-    "createdAt": "2023-05-27T05:26:56.000Z"
+    "createdAt": "2023-05-27T05:26:56.000Z",
+    "salaryMin": 2700,
+    "salaryMax": 3100,
+    "jobUrl": "https://careers.wonkaindustries.example/junior-software-engineer"
   },
   {
     "company": "Massive Dynamic",
@@ -77,7 +97,10 @@
     "status": "pending",
     "jobType": "full-time",
     "jobLocation": "Paris",
-    "createdAt": "2023-06-04T00:07:57.000Z"
+    "createdAt": "2023-06-04T00:07:57.000Z",
+    "salaryMin": 3500,
+    "salaryMax": 5300,
+    "jobUrl": "https://careers.massivedynamic.example/software-engineer-intern"
   },
   {
     "company": "Massive Dynamic",
@@ -85,7 +108,10 @@
     "status": "pending",
     "jobType": "remote",
     "jobLocation": "London",
-    "createdAt": "2023-06-04T03:08:25.000Z"
+    "createdAt": "2023-06-04T03:08:25.000Z",
+    "salaryMin": 2400,
+    "salaryMax": 4000,
+    "jobUrl": "https://careers.massivedynamic.example/mobile-developer"
   },
   {
     "company": "Gringotts",
@@ -93,7 +119,9 @@
     "status": "pending",
     "jobType": "full-time",
     "jobLocation": "Montreal",
-    "createdAt": "2023-06-08T11:07:40.000Z"
+    "createdAt": "2023-06-08T11:07:40.000Z",
+    "salaryMin": 2800,
+    "salaryMax": 3300
   },
   {
     "company": "Oscorp",
@@ -101,7 +129,10 @@
     "status": "declined",
     "jobType": "full-time",
     "jobLocation": "Dubai",
-    "createdAt": "2023-06-11T09:09:22.000Z"
+    "createdAt": "2023-06-11T09:09:22.000Z",
+    "salaryMin": 4900,
+    "salaryMax": 5700,
+    "jobUrl": "https://careers.oscorp.example/frontend-developer"
   },
   {
     "company": "Hooli",
@@ -109,7 +140,10 @@
     "status": "pending",
     "jobType": "internship",
     "jobLocation": "Dubai",
-    "createdAt": "2023-06-19T05:59:09.000Z"
+    "createdAt": "2023-06-19T05:59:09.000Z",
+    "salaryMin": 3300,
+    "salaryMax": 4800,
+    "jobUrl": "https://careers.hooli.example/software-engineer-intern"
   },
   {
     "company": "Soylent",
@@ -117,7 +151,8 @@
     "status": "declined",
     "jobType": "part-time",
     "jobLocation": "Montreal",
-    "createdAt": "2023-06-20T02:51:49.000Z"
+    "createdAt": "2023-06-20T02:51:49.000Z",
+    "jobUrl": "https://careers.soylent.example/qa-automation-engineer"
   },
   {
     "company": "Acme Corp",
@@ -133,7 +168,9 @@
     "status": "pending",
     "jobType": "full-time",
     "jobLocation": "London",
-    "createdAt": "2023-06-30T12:09:57.000Z"
+    "createdAt": "2023-06-30T12:09:57.000Z",
+    "salaryMin": 3500,
+    "salaryMax": 5100
   },
   {
     "company": "Oscorp",
@@ -141,7 +178,10 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Dubai",
-    "createdAt": "2023-07-14T22:30:24.000Z"
+    "createdAt": "2023-07-14T22:30:24.000Z",
+    "salaryMin": 4800,
+    "salaryMax": 5800,
+    "jobUrl": "https://careers.oscorp.example/mobile-developer"
   },
   {
     "company": "Pied Piper",
@@ -149,7 +189,9 @@
     "status": "pending",
     "jobType": "remote",
     "jobLocation": "Sfax",
-    "createdAt": "2023-07-15T14:59:27.000Z"
+    "createdAt": "2023-07-15T14:59:27.000Z",
+    "salaryMin": 5000,
+    "salaryMax": 5600
   },
   {
     "company": "Initech",
@@ -157,7 +199,10 @@
     "status": "declined",
     "jobType": "part-time",
     "jobLocation": "Paris",
-    "createdAt": "2023-07-15T23:31:33.000Z"
+    "createdAt": "2023-07-15T23:31:33.000Z",
+    "salaryMin": 5100,
+    "salaryMax": 6700,
+    "jobUrl": "https://careers.initech.example/node-js-engineer"
   },
   {
     "company": "Aperture Science",
@@ -165,7 +210,10 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Remote",
-    "createdAt": "2023-07-19T22:54:06.000Z"
+    "createdAt": "2023-07-19T22:54:06.000Z",
+    "salaryMin": 5100,
+    "salaryMax": 5800,
+    "jobUrl": "https://careers.aperturescience.example/platform-engineer"
   },
   {
     "company": "Black Mesa",
@@ -173,7 +221,9 @@
     "status": "declined",
     "jobType": "full-time",
     "jobLocation": "Amsterdam",
-    "createdAt": "2023-07-20T03:35:46.000Z"
+    "createdAt": "2023-07-20T03:35:46.000Z",
+    "salaryMin": 5600,
+    "salaryMax": 7400
   },
   {
     "company": "Globex",
@@ -181,7 +231,8 @@
     "status": "pending",
     "jobType": "part-time",
     "jobLocation": "London",
-    "createdAt": "2023-08-06T22:32:02.000Z"
+    "createdAt": "2023-08-06T22:32:02.000Z",
+    "jobUrl": "https://careers.globex.example/node-js-engineer"
   },
   {
     "company": "Umbrella",
@@ -189,7 +240,10 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Remote",
-    "createdAt": "2023-08-11T17:17:18.000Z"
+    "createdAt": "2023-08-11T17:17:18.000Z",
+    "salaryMin": 5500,
+    "salaryMax": 6800,
+    "jobUrl": "https://careers.umbrella.example/frontend-developer"
   },
   {
     "company": "Acme Corp",
@@ -205,7 +259,9 @@
     "status": "pending",
     "jobType": "remote",
     "jobLocation": "Dubai",
-    "createdAt": "2023-08-14T13:53:58.000Z"
+    "createdAt": "2023-08-14T13:53:58.000Z",
+    "salaryMin": 2300,
+    "salaryMax": 3600
   },
   {
     "company": "Wayne Enterprises",
@@ -221,7 +277,10 @@
     "status": "offer",
     "jobType": "full-time",
     "jobLocation": "Tunis",
-    "createdAt": "2023-08-21T10:40:57.000Z"
+    "createdAt": "2023-08-21T10:40:57.000Z",
+    "salaryMin": 2900,
+    "salaryMax": 3600,
+    "jobUrl": "https://careers.monstersinc.example/node-js-engineer"
   },
   {
     "company": "Soylent",
@@ -245,7 +304,9 @@
     "status": "declined",
     "jobType": "full-time",
     "jobLocation": "Tunis",
-    "createdAt": "2023-09-12T22:12:29.000Z"
+    "createdAt": "2023-09-12T22:12:29.000Z",
+    "salaryMin": 2900,
+    "salaryMax": 4400
   },
   {
     "company": "Globex",
@@ -261,7 +322,10 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Sfax",
-    "createdAt": "2023-09-16T09:17:33.000Z"
+    "createdAt": "2023-09-16T09:17:33.000Z",
+    "salaryMin": 2700,
+    "salaryMax": 4600,
+    "jobUrl": "https://careers.monstersinc.example/qa-automation-engineer"
   },
   {
     "company": "Acme Corp",
@@ -269,7 +333,9 @@
     "status": "offer",
     "jobType": "full-time",
     "jobLocation": "Dubai",
-    "createdAt": "2023-09-26T05:00:41.000Z"
+    "createdAt": "2023-09-26T05:00:41.000Z",
+    "salaryMin": 3300,
+    "salaryMax": 5100
   },
   {
     "company": "Oscorp",
@@ -277,7 +343,10 @@
     "status": "declined",
     "jobType": "full-time",
     "jobLocation": "Sousse",
-    "createdAt": "2023-10-01T18:32:28.000Z"
+    "createdAt": "2023-10-01T18:32:28.000Z",
+    "salaryMin": 4800,
+    "salaryMax": 6400,
+    "jobUrl": "https://careers.oscorp.example/devops-engineer"
   },
   {
     "company": "Wonka Industries",
@@ -285,7 +354,9 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Sousse",
-    "createdAt": "2023-10-03T13:36:47.000Z"
+    "createdAt": "2023-10-03T13:36:47.000Z",
+    "salaryMin": 5400,
+    "salaryMax": 6600
   },
   {
     "company": "Tyrell Corp",
@@ -293,7 +364,10 @@
     "status": "interview",
     "jobType": "full-time",
     "jobLocation": "Berlin",
-    "createdAt": "2023-10-13T21:10:21.000Z"
+    "createdAt": "2023-10-13T21:10:21.000Z",
+    "salaryMin": 3800,
+    "salaryMax": 4500,
+    "jobUrl": "https://careers.tyrellcorp.example/platform-engineer"
   },
   {
     "company": "Dunder Mifflin",
@@ -301,7 +375,9 @@
     "status": "declined",
     "jobType": "full-time",
     "jobLocation": "Dubai",
-    "createdAt": "2023-10-16T06:15:09.000Z"
+    "createdAt": "2023-10-16T06:15:09.000Z",
+    "salaryMin": 3700,
+    "salaryMax": 5200
   },
   {
     "company": "Black Mesa",
@@ -309,7 +385,8 @@
     "status": "pending",
     "jobType": "full-time",
     "jobLocation": "Sfax",
-    "createdAt": "2023-10-17T21:07:45.000Z"
+    "createdAt": "2023-10-17T21:07:45.000Z",
+    "jobUrl": "https://careers.blackmesa.example/frontend-developer"
   },
   {
     "company": "Aperture Science",
@@ -317,6 +394,9 @@
     "status": "pending",
     "jobType": "full-time",
     "jobLocation": "Sousse",
-    "createdAt": "2023-10-21T00:09:23.000Z"
+    "createdAt": "2023-10-21T00:09:23.000Z",
+    "salaryMin": 3100,
+    "salaryMax": 4200,
+    "jobUrl": "https://careers.aperturescience.example/frontend-developer"
   }
 ]
