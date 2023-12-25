@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jobs API</title>
+    <meta
+      name="description"
+      content="An open-source REST API for tracking job applications: accounts, search, stats and CSV export, ready to run with Docker."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='none' stroke='%231f8a5b' stroke-width='3' transform='rotate(-8 16 16)'/%3E%3Cpath d='M10 17l4 4 8-9' fill='none' stroke='%231f8a5b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..900,0..1,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f2f4f8;
+        --card: #ffffff;
+        --ink: #18213a;
+        --muted: #5b6680;
+        --line: #d5dbe6;
+        --code-bg: #18213a;
+        --code-ink: #e6ebf5;
+        --pending: #4f6bd8;
+        --interview: #b8730f;
+        --offer: #1f8a5b;
+        --declined: #b83a4b;
+        --radius: 14px;
+        --gutter: 24px;
+        color-scheme: light dark;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #10162a;
+          --card: #18203a;
+          --ink: #e8ecf5;
+          --muted: #9aa5bf;
+          --line: #2a3454;
+          --code-bg: #0b1020;
+          --code-ink: #dce3f2;
+          --pending: #8199f0;
+          --interview: #e3a440;
+          --offer: #4cc08a;
+          --declined: #e8707f;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Recursive', system-ui, sans-serif;
+        font-size: 17px;
+        line-height: 1.6;
+        font-variation-settings:
+          'CASL' 0,
+          'MONO' 0;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      code,
+      pre,
+      .mono {
+        font-family: 'Recursive', ui-monospace, monospace;
+        font-variation-settings:
+          'CASL' 0,
+          'MONO' 1;
+        font-size: 0.9em;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--pending);
+        outline-offset: 3px;
+        border-radius: 6px;
+      }
+
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+      }
+
+      /* navigation */
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 22px;
+        padding-bottom: 22px;
+      }
+
+      .wordmark {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 1.15rem;
+        text-decoration: none;
+        font-variation-settings:
+          'CASL' 0.6,
+          'MONO' 0;
+      }
+
+      .wordmark svg {
+        color: var(--offer);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 22px;
+        font-size: 0.95rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--muted);
+      }
+
+      .nav-links a:hover {
+        color: var(--ink);
+      }
+
+      /* hero */
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        gap: 64px;
+        align-items: center;
+        padding-top: 56px;
+        padding-bottom: 96px;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 5.4vw, 4.1rem);
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+        font-weight: 850;
+        font-variation-settings:
+          'CASL' 0.5,
+          'MONO' 0;
+        margin: 0 0 24px;
+        max-width: 13ch;
+      }
+
+      .lede {
+        font-size: 1.2rem;
+        color: var(--muted);
+        max-width: 34em;
+        margin: 0 0 32px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 650;
+        text-decoration: none;
+        border: 2px solid var(--ink);
+      }
+
+      .button.primary {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .button.primary:hover {
+        background: transparent;
+        color: var(--ink);
+      }
+
+      .button.secondary:hover {
+        background: var(--card);
+      }
+
+      .one-liner {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .one-liner code {
+        white-space: nowrap;
+        color: var(--ink);
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 3px 8px;
+      }
+
+      /* the application card */
+      .application {
+        position: relative;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 28px 28px 24px;
+        box-shadow:
+          0 1px 0 var(--line),
+          0 18px 40px -24px rgba(24, 33, 58, 0.35);
+      }
+
+      .application h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        line-height: 1.25;
+      }
+
+      .application .meta {
+        margin: 4px 0 0;
+        color: var(--muted);
+      }
+
+      .salary {
+        margin: 14px 0 22px;
+        font-weight: 600;
+      }
+
+      .timeline {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .timeline li {
+        display: grid;
+        grid-template-columns: 14px 1fr auto;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--status);
+      }
+
+      .timeline .mono {
+        color: var(--status);
+        font-weight: 700;
+      }
+
+      .timeline time {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .stamp {
+        position: absolute;
+        top: 22px;
+        right: 22px;
+        padding: 4px 14px 6px;
+        border: 3px solid var(--offer);
+        border-radius: 10px;
+        color: var(--offer);
+        font-size: 1.7rem;
+        font-weight: 900;
+        line-height: 1.1;
+        transform: rotate(-8deg);
+        font-variation-settings:
+          'CASL' 1,
+          'MONO' 1;
+      }
+
+      .request {
+        margin: 14px 0 0;
+        padding: 18px 20px;
+        background: var(--code-bg);
+        color: var(--code-ink);
+        border-radius: var(--radius);
+        overflow-x: auto;
+        font-size: 0.85rem;
+        line-height: 1.7;
+      }
+
+      .request .verb {
+        color: var(--interview);
+        font-weight: 700;
+      }
+
+      .request .key {
+        color: #9fb3ff;
+      }
+
+      .request .value {
+        color: #7fdcae;
+      }
+
+      /* sections */
+      section {
+        padding-top: 72px;
+        padding-bottom: 72px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2.section-title {
+        font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+        font-weight: 800;
+        font-variation-settings:
+          'CASL' 0.5,
+          'MONO' 0;
+        margin: 0 0 12px;
+      }
+
+      .section-intro {
+        color: var(--muted);
+        max-width: 36em;
+        margin: 0 0 40px;
+      }
+
+      /* quick start */
+      .steps {
+        list-style: none;
+        counter-reset: step;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 28px;
+        max-width: 760px;
+      }
+
+      .steps > li {
+        counter-increment: step;
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 4px 16px;
+      }
+
+      .steps > li::before {
+        content: counter(step);
+        grid-row: span 2;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid var(--ink);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+
+      .steps h3 {
+        margin: 4px 0 0;
+        font-size: 1.1rem;
+      }
+
+      .snippet {
+        position: relative;
+        margin-top: 10px;
+      }
+
+      .snippet pre {
+        margin: 0;
+        padding: 16px 92px 16px 18px;
+        background: var(--code-bg);
+        color: var(--code-ink);
+        border-radius: 10px;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        line-height: 1.7;
+      }
+
+      .copy {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font: inherit;
+        font-size: 0.8rem;
+        font-weight: 650;
+        color: var(--code-ink);
+        background: transparent;
+        border: 1px solid rgba(230, 235, 245, 0.35);
+        border-radius: 8px;
+        padding: 4px 10px;
+        cursor: pointer;
+      }
+
+      .copy:hover {
+        border-color: var(--code-ink);
+      }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding-top: 32px;
+        padding-bottom: 48px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      footer nav {
+        display: flex;
+        gap: 20px;
+      }
+
+      @media (max-width: 900px) {
+        .hero {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 48px;
+          padding-top: 24px;
+          padding-bottom: 64px;
+        }
+      }
+
+      @media (max-width: 560px) {
+        :root {
+          --gutter: 16px;
+        }
+        .nav-links a:not(.keep) {
+          display: none;
+        }
+        .application {
+          padding: 22px 18px 18px;
+        }
+        .stamp {
+          font-size: 1.3rem;
+          top: 16px;
+          right: 14px;
+        }
+        section {
+          padding-top: 56px;
+          padding-bottom: 56px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="wrap nav">
+      <a class="wordmark" href="./">
+        <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+          <rect
+            x="3"
+            y="3"
+            width="26"
+            height="26"
+            rx="6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            transform="rotate(-8 16 16)"
+          />
+          <path
+            d="M10 17l4 4 8-9"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Jobs API
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="#quick-start">Quick start</a>
+        <a class="keep" href="https://github.com/mohamedaminehamdi/Jobs-Api">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="wrap hero">
+        <div>
+          <h1>Track every application, from first click to offer.</h1>
+          <p class="lede">
+            Jobs API is an open-source REST API for job hunting apps. Accounts, search, stats and
+            CSV export are built in, and the whole stack starts with one Docker command.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/mohamedaminehamdi/Jobs-Api"
+              >View on GitHub</a
+            >
+          </div>
+          <p class="one-liner">Runs anywhere Docker does: <code>docker compose up</code></p>
+        </div>
+
+        <div>
+          <article class="application" aria-label="Example job application">
+            <h2>Backend Developer</h2>
+            <p class="meta">Acme, Tunis. Full-time.</p>
+            <p class="salary">3,000 to 4,500 a month</p>
+            <ol class="timeline" aria-label="Status history">
+              <li style="--status: var(--pending)">
+                <span class="dot" aria-hidden="true"></span>
+                <span class="mono">pending</span>
+                <time datetime="2023-12-04T09:12">Dec 4, 09:12</time>
+              </li>
+              <li style="--status: var(--interview)">
+                <span class="dot" aria-hidden="true"></span>
+                <span class="mono">interview</span>
+                <time datetime="2023-12-11T14:30">Dec 11, 14:30</time>
+              </li>
+              <li style="--status: var(--offer)">
+                <span class="dot" aria-hidden="true"></span>
+                <span class="mono">offer</span>
+                <time datetime="2023-12-19T10:05">Dec 19, 10:05</time>
+              </li>
+            </ol>
+            <span class="stamp" aria-hidden="true">offer</span>
+          </article>
+          <pre
+            class="request"
+            aria-label="The request that recorded the offer"
+          ><code><span class="verb">PATCH</span> /api/v1/jobs/657f1c2e9b1d4a0012ab34cd
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs…
+
+{ <span class="key">"status"</span>: <span class="value">"offer"</span> }</code></pre>
+        </div>
+      </div>
+
+      <section id="quick-start">
+        <div class="wrap">
+          <h2 class="section-title">Run it in four steps</h2>
+          <p class="section-intro">
+            You need Docker. The API comes up on port 3000 with a MongoDB container next to it.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Get the code</h3>
+              <div class="snippet">
+                <pre><code id="step-clone">git clone https://github.com/mohamedaminehamdi/Jobs-Api.git
+cd Jobs-Api</code></pre>
+                <button class="copy" type="button" data-copy="step-clone">Copy</button>
+              </div>
+            </li>
+            <li>
+              <h3>Start the API and the database</h3>
+              <div class="snippet">
+                <pre><code id="step-up">JWT_SECRET=pick-a-long-random-secret docker compose up --build -d</code></pre>
+                <button class="copy" type="button" data-copy="step-up">Copy</button>
+              </div>
+            </li>
+            <li>
+              <h3>Load the demo data</h3>
+              <div class="snippet">
+                <pre><code id="step-seed">docker compose exec api node populate.js</code></pre>
+                <button class="copy" type="button" data-copy="step-seed">Copy</button>
+              </div>
+            </li>
+            <li>
+              <h3>Log in as the demo user and ask for stats</h3>
+              <div class="snippet">
+                <pre><code id="step-call">TOKEN=$(curl -s localhost:3000/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"demo@example.com","password":"demo-password"}' | jq -r .token)
+
+curl -s localhost:3000/api/v1/jobs/stats -H "Authorization: Bearer $TOKEN"</code></pre>
+                <button class="copy" type="button" data-copy="step-call">Copy</button>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <span>MIT licensed. Built with Express and MongoDB.</span>
+      <nav aria-label="Footer">
+        <a href="https://github.com/mohamedaminehamdi/Jobs-Api/blob/main/CHANGELOG.md">Changelog</a>
+        <a href="https://github.com/mohamedaminehamdi/Jobs-Api">GitHub</a>
+      </nav>
+    </footer>
+
+    <script>
+      document.querySelectorAll('[data-copy]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const text = document.getElementById(button.dataset.copy).innerText;
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = 'Copied';
+          } catch {
+            button.textContent = 'Select and copy';
+          }
+          setTimeout(() => (button.textContent = 'Copy'), 1600);
+        });
+      });
+    </script>
+  </body>
+</html>
