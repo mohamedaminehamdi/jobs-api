@@ -338,6 +338,115 @@
         margin: 0 0 40px;
       }
 
+      .features {
+        display: grid;
+        grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
+        margin: 0;
+      }
+
+      .features dt,
+      .features dd {
+        margin: 0;
+        padding: 22px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .features dt {
+        font-weight: 750;
+        padding-right: 32px;
+      }
+
+      .features dd {
+        color: var(--muted);
+        max-width: 38em;
+      }
+
+      .bar {
+        display: flex;
+        height: 14px;
+        border-radius: 7px;
+        overflow: hidden;
+        margin: 16px 0 10px;
+        max-width: 420px;
+      }
+
+      .bar span {
+        background: var(--status);
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 18px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 0.9rem;
+      }
+
+      .legend li::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--status);
+        margin-right: 6px;
+      }
+
+      .endpoints {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+      }
+
+      .endpoints caption {
+        text-align: left;
+        font-weight: 750;
+        padding: 0 0 8px;
+      }
+
+      .endpoints th,
+      .endpoints td {
+        text-align: left;
+        padding: 11px 16px 11px 0;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+
+      .endpoints thead th {
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .endpoints td:last-child {
+        color: var(--muted);
+      }
+
+      .method {
+        font-weight: 700;
+      }
+
+      .method.get {
+        color: var(--pending);
+      }
+      .method.post {
+        color: var(--offer);
+      }
+      .method.patch {
+        color: var(--interview);
+      }
+      .method.delete {
+        color: var(--declined);
+      }
+
+      .endpoint-groups {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: start;
+        gap: 48px;
+      }
+
       /* quick start */
       .steps {
         list-style: none;
@@ -432,6 +541,16 @@
           padding-top: 24px;
           padding-bottom: 64px;
         }
+        .features {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .features dd {
+          border-top: 0;
+          padding-top: 0;
+        }
+        .endpoint-groups {
+          grid-template-columns: minmax(0, 1fr);
+        }
       }
 
       @media (max-width: 560px) {
@@ -483,6 +602,8 @@
         Jobs API
       </a>
       <nav class="nav-links" aria-label="Main">
+        <a href="#features">Features</a>
+        <a href="#endpoints">Endpoints</a>
         <a href="#quick-start">Quick start</a>
         <a class="keep" href="https://github.com/mohamedaminehamdi/Jobs-Api">GitHub</a>
       </nav>
@@ -537,6 +658,169 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIs…
 { <span class="key">"status"</span>: <span class="value">"offer"</span> }</code></pre>
         </div>
       </div>
+
+      <section id="features">
+        <div class="wrap">
+          <h2 class="section-title">Everything a job tracker needs</h2>
+          <p class="section-intro">
+            Build the app you want on top of it. The API takes care of storing applications, finding
+            them again and keeping each account private.
+          </p>
+          <dl class="features">
+            <dt>Keep track of applications</dt>
+            <dd>
+              Company, position, status, job type, location, salary range, a link to the posting and
+              your own notes. Every status change is recorded with the time it happened.
+            </dd>
+
+            <dt>Find the one you need</dt>
+            <dd>
+              Search by position or company, filter by one or several statuses, job type or date
+              range, then sort and page through the results.
+            </dd>
+
+            <dt>See how the search is going</dt>
+            <dd>
+              Counts per status and per job type, plus applications per month. This is the demo
+              account after seeding:
+              <div
+                class="bar"
+                role="img"
+                aria-label="15 pending, 10 interview, 5 offer, 10 declined"
+              >
+                <span style="--status: var(--pending); flex: 15"></span>
+                <span style="--status: var(--interview); flex: 10"></span>
+                <span style="--status: var(--offer); flex: 5"></span>
+                <span style="--status: var(--declined); flex: 10"></span>
+              </div>
+              <ul class="legend">
+                <li style="--status: var(--pending)">15 pending</li>
+                <li style="--status: var(--interview)">10 interview</li>
+                <li style="--status: var(--offer)">5 offer</li>
+                <li style="--status: var(--declined)">10 declined</li>
+              </ul>
+            </dd>
+
+            <dt>Take your data with you</dt>
+            <dd>
+              Download any filtered list as CSV. Values that a spreadsheet would run as formulas are
+              escaped.
+            </dd>
+
+            <dt>Keep accounts safe</dt>
+            <dd>
+              JWT sessions and bcrypt-hashed passwords. Changing a password signs out every other
+              session, and deleting an account removes all of its jobs. Requests are validated,
+              sanitized and rate limited, and the public demo account is read only.
+            </dd>
+          </dl>
+        </div>
+      </section>
+
+      <section id="endpoints">
+        <div class="wrap">
+          <h2 class="section-title">Endpoints</h2>
+          <p class="section-intro">
+            Everything lives under <code>/api/v1</code>. Send the token from register or login as
+            <code>Authorization: Bearer &lt;token&gt;</code>.
+          </p>
+          <div class="endpoint-groups">
+            <table class="endpoints">
+              <caption>
+                Account
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Method</th>
+                  <th scope="col">Route</th>
+                  <th scope="col">Does</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono method post">POST</td>
+                  <td class="mono">/auth/register</td>
+                  <td>Create an account</td>
+                </tr>
+                <tr>
+                  <td class="mono method post">POST</td>
+                  <td class="mono">/auth/login</td>
+                  <td>Log in</td>
+                </tr>
+                <tr>
+                  <td class="mono method get">GET</td>
+                  <td class="mono">/auth/me</td>
+                  <td>Your profile</td>
+                </tr>
+                <tr>
+                  <td class="mono method patch">PATCH</td>
+                  <td class="mono">/auth/updateUser</td>
+                  <td>Edit your profile</td>
+                </tr>
+                <tr>
+                  <td class="mono method patch">PATCH</td>
+                  <td class="mono">/auth/updatePassword</td>
+                  <td>Change your password</td>
+                </tr>
+                <tr>
+                  <td class="mono method delete">DELETE</td>
+                  <td class="mono">/auth/me</td>
+                  <td>Delete your account</td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="endpoints">
+              <caption>
+                Jobs
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Method</th>
+                  <th scope="col">Route</th>
+                  <th scope="col">Does</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono method get">GET</td>
+                  <td class="mono">/jobs</td>
+                  <td>Search and list</td>
+                </tr>
+                <tr>
+                  <td class="mono method post">POST</td>
+                  <td class="mono">/jobs</td>
+                  <td>Add an application</td>
+                </tr>
+                <tr>
+                  <td class="mono method get">GET</td>
+                  <td class="mono">/jobs/stats</td>
+                  <td>Counts and trends</td>
+                </tr>
+                <tr>
+                  <td class="mono method get">GET</td>
+                  <td class="mono">/jobs/export</td>
+                  <td>Download as CSV</td>
+                </tr>
+                <tr>
+                  <td class="mono method get">GET</td>
+                  <td class="mono">/jobs/:id</td>
+                  <td>One application</td>
+                </tr>
+                <tr>
+                  <td class="mono method patch">PATCH</td>
+                  <td class="mono">/jobs/:id</td>
+                  <td>Update it</td>
+                </tr>
+                <tr>
+                  <td class="mono method delete">DELETE</td>
+                  <td class="mono">/jobs/:id</td>
+                  <td>Remove it</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       <section id="quick-start">
         <div class="wrap">
