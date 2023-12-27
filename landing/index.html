@@ -534,6 +534,34 @@
         gap: 20px;
       }
 
+      @media (prefers-reduced-motion: no-preference) {
+        .timeline li:nth-child(2) {
+          animation: appear 0.45s ease-out 0.9s backwards;
+        }
+
+        .timeline li:nth-child(3) {
+          animation: appear 0.45s ease-out 1.8s backwards;
+        }
+
+        .stamp {
+          animation: stamp 0.35s cubic-bezier(0.3, 1.6, 0.6, 1) 2.5s backwards;
+        }
+      }
+
+      @keyframes appear {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+      }
+
+      @keyframes stamp {
+        from {
+          opacity: 0;
+          transform: rotate(-16deg) scale(1.9);
+        }
+      }
+
       @media (max-width: 900px) {
         .hero {
           grid-template-columns: minmax(0, 1fr);
