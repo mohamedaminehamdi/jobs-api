@@ -8,10 +8,13 @@ their own list of applications: where they applied, for which position, and how 
 ## Features
 
 - JWT authentication with bcrypt-hashed passwords
-- Job applications CRUD, scoped to the logged-in user
-- Search, filtering, sorting and pagination on the job list
-- Stats endpoint: applications per status and per month
-- Profile and password updates
+- Job applications CRUD, scoped to the logged-in user, with salary range, posting link and notes
+- Status history: every status change is recorded with its timestamp
+- Search, filtering (several statuses, job type, date range), sorting and pagination
+- Stats endpoint: applications per status, per job type and per month
+- CSV export of any filtered list, safe to open in a spreadsheet
+- Profile and password updates; changing the password signs out older sessions
+- Account deletion that also removes the user's jobs
 - Read-only demo account for showcasing the API
 - Request validation with Joi
 - Security middleware: helmet, CORS, rate limiting, XSS and NoSQL-injection sanitizing
@@ -65,9 +68,11 @@ header; the token comes from register or login. Errors are returned as `{ "msg":
 | GET    | `/auth/me`             | yes  | Current user profile                 |
 | PATCH  | `/auth/updateUser`     | yes  | Update name, last name, email, place |
 | PATCH  | `/auth/updatePassword` | yes  | Change password                      |
+| DELETE | `/auth/me`             | yes  | Delete the account and its jobs      |
 | GET    | `/jobs`                | yes  | List jobs                            |
 | POST   | `/jobs`                | yes  | Create a job                         |
-| GET    | `/jobs/stats`          | yes  | Counts per status and per month      |
+| GET    | `/jobs/stats`          | yes  | Counts per status, type and month    |
+| GET    | `/jobs/export`         | yes  | Download jobs as CSV                 |
 | GET    | `/jobs/:id`            | yes  | Get a job                            |
 | PATCH  | `/jobs/:id`            | yes  | Update a job                         |
 | DELETE | `/jobs/:id`            | yes  | Delete a job                         |
@@ -77,16 +82,24 @@ header; the token comes from register or login. Errors are returned as `{ "msg":
 
 `GET /jobs` accepts these query parameters:
 
-| Param     | Values                                                  | Default  |
-| --------- | ------------------------------------------------------- | -------- |
-| `status`  | `all`, `pending`, `interview`, `offer`, `declined`      | `all`    |
-| `jobType` | `all`, `full-time`, `part-time`, `remote`, `internship` | `all`    |
-| `search`  | text matched against position and company               |          |
-| `sort`    | `latest`, `oldest`, `a-z`, `z-a`                        | `latest` |
-| `page`    | page number, starting at 1                              | `1`      |
-| `limit`   | page size, 1 to 100                                     | `10`     |
+| Param     | Values                                                                                   | Default  |
+| --------- | ---------------------------------------------------------------------------------------- | -------- |
+| `status`  | `all`, or one or more of `pending`, `interview`, `offer`, `declined` separated by commas | `all`    |
+| `jobType` | `all`, `full-time`, `part-time`, `remote`, `internship`                                  | `all`    |
+| `search`  | text matched against position and company                                                |          |
+| `from`    | ISO date, jobs created at or after it                                                    |          |
+| `to`      | ISO date, jobs created at or before it                                                   |          |
+| `sort`    | `latest`, `oldest`, `a-z`, `z-a`                                                         | `latest` |
+| `page`    | page number, starting at 1                                                               | `1`      |
+| `limit`   | page size, 1 to 100                                                                      | `10`     |
 
 The response contains `jobs`, `totalJobs` and `numOfPages`.
+
+`GET /jobs/export` takes the same filters and `sort` and returns a `jobs.csv` attachment with every
+matching job.
+
+Every response carries an `X-Request-Id` header, which also appears in the server logs. Send your
+own (letters, digits, `-` and `_`) to correlate requests across services.
 
 ### Example
 
