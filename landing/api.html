@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jobs API reference</title>
+    <meta name="description" content="OpenAPI reference for every Jobs API endpoint." />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='none' stroke='%231f8a5b' stroke-width='3' transform='rotate(-8 16 16)'/%3E%3Cpath d='M10 17l4 4 8-9' fill='none' stroke='%231f8a5b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..900,0..1,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.5/swagger-ui.css"
+      integrity="sha384-fggJG3d/1uo8FjBTP7/QTfjIzaMS1AWDUnQarNCJZzqQlqjGLP0Kx8Un9XXsiv2q"
+      crossorigin="anonymous"
+    />
+    <style>
+      /* Swagger UI only ships a light theme, so this page stays light */
+      :root {
+        --paper: #f2f4f8;
+        --ink: #18213a;
+        --muted: #5b6680;
+        --line: #d5dbe6;
+        --offer: #1f8a5b;
+        color-scheme: light;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Recursive', system-ui, sans-serif;
+        font-variation-settings:
+          'CASL' 0,
+          'MONO' 0;
+      }
+
+      a:focus-visible {
+        outline: 3px solid #4f6bd8;
+        outline-offset: 3px;
+        border-radius: 6px;
+      }
+
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 22px;
+        padding-bottom: 22px;
+      }
+
+      .wordmark {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 1.15rem;
+        text-decoration: none;
+        color: inherit;
+        font-variation-settings:
+          'CASL' 0.6,
+          'MONO' 0;
+      }
+
+      .wordmark svg {
+        color: var(--offer);
+      }
+
+      .nav a:not(.wordmark) {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .note {
+        color: var(--muted);
+        margin: 8px auto 0;
+        line-height: 1.6;
+      }
+
+      .note code {
+        font-family: 'Recursive', ui-monospace, monospace;
+        font-variation-settings:
+          'CASL' 0,
+          'MONO' 1;
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+
+      #swagger .swagger-ui .wrapper {
+        padding: 0 24px;
+        max-width: 1120px;
+      }
+
+      #swagger .swagger-ui .information-container .info {
+        margin: 32px 0;
+      }
+
+      #swagger .swagger-ui .scheme-container {
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      @media (max-width: 560px) {
+        .wrap,
+        #swagger .swagger-ui .wrapper {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="wrap nav">
+      <a class="wordmark" href="./">
+        <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+          <rect
+            x="3"
+            y="3"
+            width="26"
+            height="26"
+            rx="6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            transform="rotate(-8 16 16)"
+          />
+          <path
+            d="M10 17l4 4 8-9"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Jobs API
+      </a>
+      <a href="https://github.com/mohamedaminehamdi/Jobs-Api">GitHub</a>
+    </header>
+
+    <main>
+      <p class="wrap note">
+        This page documents every endpoint but cannot send requests. To try them, run the API and
+        open <code>localhost:3000/api-docs</code>.
+      </p>
+      <div id="swagger"></div>
+    </main>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.5/swagger-ui-bundle.js"
+      integrity="sha384-scCk4H/owymn3wdPNx4OQh/3JuTclN1cRMh0Rbj4htBKPImeXEghC5zPAFLZnTts"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      SwaggerUIBundle({
+        url: 'swagger.yaml',
+        dom_id: '#swagger',
+        deepLinking: true,
+        defaultModelsExpandDepth: 0,
+        // there is no API behind GitHub Pages, so hide "Try it out"
+        supportedSubmitMethods: [],
+      });
+    </script>
+  </body>
+</html>
