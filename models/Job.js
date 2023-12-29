@@ -64,6 +64,14 @@ const JobSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// the validator only sees one request; this also covers an update that sends
+// a single bound which conflicts with the one already stored
+JobSchema.pre('validate', function () {
+  if (this.salaryMin != null && this.salaryMax != null && this.salaryMax < this.salaryMin) {
+    this.invalidate('salaryMax', 'salaryMax must be greater than or equal to salaryMin');
+  }
+});
+
 // keep a timeline of every status the application went through
 JobSchema.pre('save', function () {
   if (this.isNew || this.isModified('status')) {

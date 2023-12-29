@@ -105,6 +105,17 @@ describe('salary range', () => {
     expect(res.body.msg).toMatch(/salaryMax must be greater than or equal to/);
   });
 
+  it('checks a partial update against the stored range', async () => {
+    const { body } = await create({ salaryMin: 3000, salaryMax: 4500 });
+    const update = (job) =>
+      request(server).patch(`/api/v1/jobs/${body.job._id}`).set('Authorization', token).send(job);
+
+    const res = await update({ salaryMax: 2000 });
+    expect(res.status).toBe(400);
+    expect(res.body.msg).toBe('salaryMax must be greater than or equal to salaryMin');
+    expect((await update({ salaryMin: 4000 })).status).toBe(200);
+  });
+
   it('rejects negative salaries', async () => {
     expect((await create({ salaryMin: -1 })).status).toBe(400);
   });
