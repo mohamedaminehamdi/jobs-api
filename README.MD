@@ -5,6 +5,9 @@
 A REST API for keeping track of job applications. Users register, log in with a JWT and manage
 their own list of applications: where they applied, for which position, and how far it went.
 
+See the [project page](https://mohamedaminehamdi.github.io/Jobs-Api/) and the
+[API reference](https://mohamedaminehamdi.github.io/Jobs-Api/api.html).
+
 ## Features
 
 - JWT authentication with bcrypt-hashed passwords
