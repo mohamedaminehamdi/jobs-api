@@ -4,6 +4,32 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- `salaryMin` / `salaryMax` and `jobUrl` fields on jobs
+- `statusHistory`: every status change is recorded with its timestamp
+- Job list filters: several statuses at once (`status=interview,offer`) and a `from` / `to` date range
+- `typeStats` in `GET /jobs/stats`
+- `GET /jobs/export` downloads the filtered list as CSV, with spreadsheet formulas neutralized
+- `DELETE /auth/me` deletes the account and its jobs after confirming the password
+- `X-Request-Id` on every response, reused from a well-formed incoming header and logged
+- Landing page and static API reference, deployed to GitHub Pages
+- Mock data now includes salaries and posting links
+
+### Changed
+
+- Changing the password revokes every token issued before the change and returns a new one
+- The auth middleware checks that the user still exists
+- Job updates go through `save()` so model hooks and validation run
+- The server forces an exit when graceful shutdown takes more than 10 seconds
+- CI cancels superseded runs and caches the MongoDB test binaries
+
+### Fixed
+
+- A partial update could store a `salaryMax` below the existing `salaryMin`
+
 ## [1.1.0] - 2023-11-28
 
 ### Added
