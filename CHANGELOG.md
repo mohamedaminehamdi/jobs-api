@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Session revocation used a timestamp with a one second grace window, so a token issued just
+  before a password change stayed valid. Users now carry a `tokenVersion` that every token must
+  match.
+
 ## [1.2.0] - 2023-12-31
 
 ### Added

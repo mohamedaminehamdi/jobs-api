@@ -39,7 +39,11 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  passwordChangedAt: Date,
+  // bumped on every password change; tokens carrying an older value are rejected
+  tokenVersion: {
+    type: Number,
+    default: 0,
+  },
 });
 
 UserSchema.set('toJSON', {
@@ -52,8 +56,7 @@ UserSchema.set('toJSON', {
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   if (!this.isNew) {
-    // one second back so the token issued with the change stays valid (iat has second precision)
-    this.passwordChangedAt = new Date(Date.now() - 1000);
+    this.tokenVersion += 1;
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
@@ -61,7 +64,7 @@ UserSchema.pre('save', async function (next) {
 });
 UserSchema.methods.createJWT = function () {
   return jwt.sign(
-    { userId: this._id, name: this.name, isDemo: this.isDemo },
+    { userId: this._id, name: this.name, isDemo: this.isDemo, tokenVersion: this.tokenVersion },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_LIFETIME || '1d',

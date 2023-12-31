@@ -224,6 +224,17 @@ describe('PATCH /api/v1/auth/updatePassword', () => {
     expect(fresh.status).toBe(200);
   });
 
+  it('rejects a token issued in the same second as the change', async () => {
+    const token = await registerAndGetToken();
+    const res = await updatePassword(token, {
+      oldPassword: user.password,
+      newPassword: 'new-secret',
+    });
+    expect(res.status).toBe(200);
+    const stale = await request(server).get('/api/v1/auth/me').set('Authorization', token);
+    expect(stale.status).toBe(401);
+  });
+
   it('requires the current password', async () => {
     const token = await registerAndGetToken();
     const res = await updatePassword(token, { oldPassword: 'wrong', newPassword: 'new-secret' });

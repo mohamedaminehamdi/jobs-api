@@ -17,11 +17,11 @@ const auth = async (req, res, next) => {
     }
     throw new UnauthenticatedError('Authentication invalid');
   }
-  const user = await User.findById(payload.userId).select('passwordChangedAt');
+  const user = await User.findById(payload.userId).select('tokenVersion');
   if (!user) {
     throw new UnauthenticatedError('Authentication invalid');
   }
-  if (user.passwordChangedAt && payload.iat * 1000 < user.passwordChangedAt.getTime()) {
+  if ((payload.tokenVersion ?? 0) !== user.tokenVersion) {
     throw new UnauthenticatedError('Password changed, please log in again');
   }
   // attach the user to the request; next() stays outside the try so
